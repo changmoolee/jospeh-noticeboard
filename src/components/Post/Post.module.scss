@@ -1,0 +1,58 @@
+@use "joseph-sass/type";
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.header {
+  width: 90%;
+  height: 150px;
+  padding: 20px;
+  border: 1px solid rgb(238, 238, 238);
+  box-sizing: border-box;
+}
+
+.title {
+  @include type.FixedHeadingStyles(heading03);
+}
+
+.userinfo {
+  display: flex;
+  margin-top: 10px;
+}
+
+.userimage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: gray;
+  margin-right: 20px;
+}
+
+.nameAndTime {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.username {
+  @include type.FixedHeadingStyles(heading01);
+}
+
+.createdTime {
+  @include type.UtilityStyles(code01);
+}
+
+.footer {
+  @include type.BodyStyles(bodyCompact02);
+  width: 90%;
+  height: 150px;
+  padding: 20px;
+  border: 1px solid rgb(238, 238, 238);
+  border-top: none;
+  box-sizing: border-box;
+}

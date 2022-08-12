@@ -1,0 +1,22 @@
+@use "joseph-sass/type";
+
+.outer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inner {
+  @include type.FixedHeadingStyles(heading05);
+  width: 200px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.buttonWrapper {
+  width: 100%;
+  display: flex;
+}

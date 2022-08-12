@@ -1,13 +1,15 @@
 import React from "react";
-import "./MyProfile.scss";
+import styles from "./MyProfile.module.scss";
 import { TextInput, Button } from "joseph-ui-kit";
 
 const MyProfile = () => {
   return (
-    <div className="container ">
-      <div className="icon" />
-      <TextInput />
-      <Button />
+    <div className={styles.container}>
+      <div className={styles.image} />
+      <div className={styles.subContainer}>
+        <TextInput width="200px" label="닉네임" hideWarn />
+        <Button width="200px" />
+      </div>
     </div>
   );
 };
