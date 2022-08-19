@@ -1,0 +1,17 @@
+@use "joseph-sass/type";
+
+.container {
+  @include type.FixedHeadingStyles(heading04);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.errorModalContent {
+  @include type.UtilityStyles(helperText02);
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
