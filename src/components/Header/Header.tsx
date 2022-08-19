@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import WritingIcon from "../../assets/icons/WritingIcon";
+import MyProfileIcon from "../../assets/icons/MyProfileIcon";
 
 const Header = () => {
+  const auth = getAuth();
+
   const navigate = useNavigate();
 
   const goToMain = () => {
@@ -22,14 +27,29 @@ const Header = () => {
   };
 
   return (
-    <>
-      <div className={styles.container}>
-        <div className={styles.temp} onClick={goToMain}></div>
-        <div className={styles.temp} onClick={goToSignIn}></div>
-        <div className={styles.temp} onClick={goToMyProfile}></div>
-        <div className={styles.temp} onClick={goToWriting}></div>
+    <div className={styles.outer}>
+      <div className={styles.inner}>
+        <div className={styles.container}>
+          <div className={styles.logo} onClick={goToMain}></div>
+          {auth.currentUser !== null ? (
+            <div className={styles.rightIconContainer}>
+              <div className={styles.icon} onClick={goToWriting}>
+                <WritingIcon />
+              </div>
+              <div className={styles.icon} onClick={goToMyProfile}>
+                <MyProfileIcon />
+              </div>
+            </div>
+          ) : (
+            <div className={styles.rightIconContainer}>
+              <div className={styles.login} onClick={goToSignIn}>
+                <span>로그인</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

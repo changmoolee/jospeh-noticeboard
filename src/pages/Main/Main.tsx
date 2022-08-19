@@ -1,25 +1,38 @@
 import React, { useState, useEffect } from "react";
-import Post from "../../components/Post/Post";
 import { db } from "../../firebase";
-import { collection, doc, getDocs, orderBy } from "firebase/firestore";
-import { query } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import { Loading } from "joseph-ui-kit";
+import Post from "../../components/Post/Post";
+import styles from "./Main.module.scss";
 
 const Main = () => {
-  const [data, setData] = useState<any>([]);
-  const freeboard = getDocs(collection(db, "freeboard"));
+  const [isLoading, setIsLoading] = useState(false);
+  const [posts, setPosts] = useState<any>([]);
 
   useEffect(() => {
+    setIsLoading(true);
+    const freeboard = getDocs(collection(db, "freeboard"));
+
     freeboard
       .then((res) => {
         res.forEach((doc: any) => {
           // doc.data() is never undefined for query doc snapshots
-          setData((data: any) => data.push({ id: doc.id, value: doc.data() }));
+          setPosts((prev: any) => [doc.data(), ...prev]);
         });
       })
-      .then(() => console.log("wow"));
+      .then(() => setIsLoading(false))
+      .catch((err) => console.log(err));
   }, []);
 
-  return <div></div>;
+  return isLoading ? (
+    <div className={styles.loadingContainer}>
+      <Loading />
+    </div>
+  ) : posts.length === 0 ? (
+    <div className={styles.nullContainer}>등록된 데이터가 없습니다!</div>
+  ) : (
+    posts.map((post: any) => <Post key={post.created_time} post={post} />)
+  );
 };
 
 export default Main;

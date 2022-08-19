@@ -1,22 +1,17 @@
 @use "joseph-sass/type";
 
-.outer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.inner {
-  @include type.FixedHeadingStyles(heading05);
-  width: 200px;
-  height: 350px;
+.container {
+  @include type.FixedHeadingStyles(heading04);
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
-.buttonWrapper {
+.errorModalContent {
+  @include type.UtilityStyles(helperText02);
   width: 100%;
-  display: flex;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }

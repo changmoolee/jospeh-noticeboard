@@ -10,14 +10,11 @@ import { Button, Modal, TextInput } from "joseph-ui-kit";
 import SignUp from "../../components/SignUp/SignUp";
 import styles from "./SignIn.module.scss";
 
-interface SignInProps {
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const SignIn = ({ setIsLoggedIn }: SignInProps) => {
+const SignIn = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [warnPassword, setWarnPassword] = useState("");
 
   const openSignUpModal = () => {
     setIsModalOpen(true);
@@ -40,15 +37,20 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user);
+        goToMain();
         // ...
         // setIsLoggedIn(true);
-        goToMain();
       })
       .catch((error) => {
-        console.log(error);
         const errorCode = error.code;
         const errorMessage = error.message;
+
+        if (errorCode === "auth/user-not-found") {
+          setWarnPassword("존재하지 않는 아이디입니다.");
+        }
+        if (errorCode === "auth/wrong-password") {
+          setWarnPassword("일치하지 않는 비밀번호입니다.");
+        }
       });
   };
 
@@ -67,7 +69,7 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
         const token = credential && credential.accessToken;
         // The signed-in user info.
         const user = result.user;
-        console.log(token, user);
+        goToMain();
         // ...
       })
       .catch((error) => {
@@ -93,7 +95,7 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.
         const credential = GithubAuthProvider.credentialFromResult(result);
         const token = credential && credential.accessToken;
-        console.log(result);
+        goToMain();
         // The signed-in user info.
         const user = result.user;
         // ...
@@ -122,7 +124,7 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
           placeholder="아이디 입력"
           type="text"
           label="아이디"
-          width="220px"
+          width="250px"
           maxLength={40}
           onChange={(data) => setEmail(data.value)}
           hideWarn
@@ -131,10 +133,10 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
           placeholder="비밀번호 입력"
           label="비밀번호"
           type="password"
-          width="220px"
+          width="250px"
           maxLength={40}
           onChange={(data) => setPassword(data.value)}
-          hideWarn
+          warn={warnPassword}
         />
       </div>
       <div className={styles.buttonlist}>
@@ -145,8 +147,8 @@ const SignIn = ({ setIsLoggedIn }: SignInProps) => {
       </div>
       {isModalOpen ? (
         <Modal
-          width="500px"
-          height="600px"
+          width="400px"
+          height="auto"
           label="회원가입"
           title="회원가입"
           closeModal={closeSignUpModal}

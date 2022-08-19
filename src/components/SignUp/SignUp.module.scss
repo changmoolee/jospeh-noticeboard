@@ -3,16 +3,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin: 50px 0px;
 }
 
 .inputlist {
+  width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
-}
-
-.buttonWrapper {
-  margin: 20px;
 }

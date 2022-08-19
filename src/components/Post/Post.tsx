@@ -1,20 +1,31 @@
 import React from "react";
 import styles from "./Post.module.scss";
 
-const Post = () => {
+const Post = ({ post }: any) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>제목입니당</div>
-        <div className={styles.userinfo}>
-          <div className={styles.userimage}></div>
+        <div className={styles.title}>{post && post.title}</div>
+        <div className={styles.userInfo}>
+          {post.userImage ? (
+            <img
+              className={styles.userImage}
+              alt="userimage"
+              src={post && post.userImage}
+            />
+          ) : (
+            <div className={styles.nullImage} />
+          )}
+
           <div className={styles.nameAndTime}>
-            <div className={styles.username}>이름입니다</div>
-            <div className={styles.createdTime}>2022.08.12</div>
+            <div className={styles.username}>{post && post.userId}</div>
+            <div className={styles.createdTime}>
+              {post && post.created_time}
+            </div>
           </div>
         </div>
       </div>
-      <div className={styles.footer}>wwwwwadasd</div>
+      <div className={styles.footer}>{post && post.content}</div>
     </div>
   );
 };
