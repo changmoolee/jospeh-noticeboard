@@ -1,0 +1,61 @@
+@use "joseph-sass/type";
+
+.container {
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  border: 1px solid rgb(238, 238, 238);
+  box-sizing: border-box;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  @include type.FixedHeadingStyles(heading03);
+  @media screen and (max-width: 900px) {
+    @include type.FixedHeadingStyles(heading01);
+  }
+}
+
+.userInfo {
+  display: flex;
+  margin-top: 10px;
+}
+
+.userImage {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.nullImage {
+  min-width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  margin-right: 20px;
+}
+
+.nameAndTime {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.username {
+  @include type.FixedHeadingStyles(heading01);
+}
+
+.createdTime {
+  @include type.UtilityStyles(code01);
+}
+.userComment {
+  @include type.BodyStyles(body02);
+  padding: 20px;
+  box-sizing: border-box;
+  @media screen and (max-width: 900px) {
+    @include type.BodyStyles(body01);
+  }
+}
