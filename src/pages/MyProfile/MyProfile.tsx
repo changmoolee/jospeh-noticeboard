@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import styles from "./MyProfile.module.scss";
+import { TextInput, Button } from "joseph-ui-kit";
+import { db } from "../../firebase";
 import { getAuth, updateProfile } from "firebase/auth";
 import {
   getStorage,
@@ -7,9 +10,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../firebase";
-import { TextInput, Button } from "joseph-ui-kit";
-import styles from "./MyProfile.module.scss";
 import SignOut from "../../components/SignOut/SignOut";
 
 const MyProfile = () => {

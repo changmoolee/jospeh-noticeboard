@@ -1,14 +1,13 @@
 import React from "react";
 import styles from "./Header.module.scss";
+import { Button } from "joseph-ui-kit";
 import { getAuth } from "firebase/auth";
 import WritingIcon from "../../assets/icons/WritingIcon";
 import MyProfileIcon from "../../assets/icons/MyProfileIcon";
-import { Button } from "joseph-ui-kit";
 
 const Header = () => {
   const auth = getAuth();
 
-  console.log(auth?.currentUser);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -16,9 +15,11 @@ const Header = () => {
           <a
             className={styles.logo}
             href="/"
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", color: "black" }}
           >
-            <img alt="logo" src="" />
+            joseph
+            <br />
+            noticeboard
           </a>
           {auth.currentUser !== null ? (
             <div className={styles.rightIconContainer}>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import styles from "./SignUp.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput } from "joseph-ui-kit";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");

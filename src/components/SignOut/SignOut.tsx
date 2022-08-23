@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { getAuth, signOut } from "firebase/auth";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./SignOut.module.scss";
+import { getAuth, signOut } from "firebase/auth";
 import { Button } from "joseph-ui-kit";
 
 const SignOut = () => {
@@ -22,6 +21,7 @@ const SignOut = () => {
       .catch((error) => {
         // An error happened.
       });
+
   return (
     <Button
       name="로그아웃"

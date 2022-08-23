@@ -31,8 +31,8 @@
 .userImage {
   width: 50px;
   height: 50px;
+  border: 1px solid black;
   border-radius: 50%;
-  background-color: gray;
   margin-right: 20px;
 }
 
@@ -40,7 +40,7 @@
   min-width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: gray;
+  background-color: rgba(0, 0, 0, 0.3);
   margin-right: 20px;
 }
 
@@ -69,4 +69,26 @@
   @media screen and (max-width: 900px) {
     @include type.BodyStyles(body01);
   }
+}
+
+.commentBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.inputWrapper {
+  flex-grow: 1;
+}
+
+.noComment {
+  @include type.BodyStyles(body02);
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
 }

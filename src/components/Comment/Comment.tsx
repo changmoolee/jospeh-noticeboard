@@ -19,7 +19,7 @@ const Comment = ({ comment }: any) => {
           <div className={styles.nullImage} />
         )}
         <div className={styles.nameAndTime}>
-          <div className={styles.username}>{comment.user}</div>
+          <div className={styles.username}>{comment.user + " 님의 댓글"}</div>
           <div className={styles.createdTime}>{comment.createdTime}</div>
         </div>
       </div>
