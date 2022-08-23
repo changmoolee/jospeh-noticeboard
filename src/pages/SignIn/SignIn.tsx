@@ -1,19 +1,20 @@
 import React, { useState } from "react";
+import styles from "./SignIn.module.scss";
 import { useNavigate } from "react-router-dom";
+import { Button, Modal, TextInput } from "joseph-ui-kit";
 import {
   getAuth,
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
-import { Button, Modal, TextInput } from "joseph-ui-kit";
 import SignUp from "../../components/SignUp/SignUp";
-import styles from "./SignIn.module.scss";
 
 const SignIn = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [warnEmail, setWarnEmail] = useState("");
   const [warnPassword, setWarnPassword] = useState("");
 
   const openSignUpModal = () => {
@@ -36,19 +37,21 @@ const SignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
+
         const user = userCredential.user;
         goToMain();
         // ...
-        // setIsLoggedIn(true);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        if (errorCode === "auth/user-not-found") {
-          setWarnPassword("존재하지 않는 아이디입니다.");
-        }
-        if (errorCode === "auth/wrong-password") {
+        if (errorCode === "auth/invalid-email") {
+          setWarnEmail("유효하지 않는 이메일입니다.");
+        } else if (errorCode === "auth/user-not-found") {
+          setWarnEmail("존재하지 않는 아이디입니다.");
+        } else if (errorCode === "auth/wrong-password") {
+          setWarnEmail("");
           setWarnPassword("일치하지 않는 비밀번호입니다.");
         }
       });
@@ -119,18 +122,20 @@ const SignIn = () => {
 
   return (
     <>
-      <div className={styles.inputlist}>
+      <form className={styles.inputlist}>
         <TextInput
-          placeholder="아이디 입력"
+          id="id"
+          placeholder="아이디를 입력해 주세요."
           type="text"
           label="아이디"
           width="250px"
           maxLength={40}
           onChange={(data) => setEmail(data.value)}
-          hideWarn
+          warn={warnEmail}
         />
         <TextInput
-          placeholder="비밀번호 입력"
+          id="password"
+          placeholder="비밀번호를 입력해 주세요."
           label="비밀번호"
           type="password"
           width="250px"
@@ -138,12 +143,27 @@ const SignIn = () => {
           onChange={(data) => setPassword(data.value)}
           warn={warnPassword}
         />
-      </div>
+      </form>
       <div className={styles.buttonlist}>
-        <Button name="로그인" width="200px" onClick={onSignIn} />
-        <Button name="회원가입" width="200px" onClick={openSignUpModal} />
-        <Button name="google" width="200px" onClick={onGoogleClick} />
-        <Button name="github" width="200px" onClick={onGithubClick} />
+        <Button kind="default" name="로그인" width="200px" onClick={onSignIn} />
+        <Button
+          kind="secondary"
+          name="회원가입"
+          width="200px"
+          onClick={openSignUpModal}
+        />
+        <Button
+          kind="tertiary"
+          name="Google 로그인"
+          width="200px"
+          onClick={onGoogleClick}
+        />
+        <Button
+          kind="tertiary"
+          name="Github 로그인"
+          width="200px"
+          onClick={onGithubClick}
+        />
       </div>
       {isModalOpen ? (
         <Modal

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { TextInput, TextArea, Button, Modal } from "joseph-ui-kit";
 import styles from "./Writing.module.scss";
-import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { TextInput, TextArea, Button } from "joseph-ui-kit";
 import { db } from "../../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { uuidv4 } from "@firebase/util";
 
 const Writing = () => {
   const [title, setTitle] = useState("");
@@ -28,6 +29,7 @@ const Writing = () => {
   };
 
   const addPost = () => {
+    const postId = uuidv4();
     if (title === "") {
       setTitleWarn("입력된 제목이 없습니다.");
       setContentWarn("");
@@ -35,14 +37,18 @@ const Writing = () => {
       setTitleWarn("");
       setContentWarn("입력된 내용이 없습니다.");
     } else {
-      addDoc(collection(db, "freeboard"), {
+      setDoc(doc(db, "freeboard", postId), {
+        postId: postId,
         userId: userId,
         userImage: userimage,
-        created_time: new Date().toLocaleString(),
+        createdTime: new Date().toLocaleString(),
         title: title,
         content: content,
       })
-        .then(() => goToMain())
+        .then(() => {
+          setDoc(doc(db, "comment", postId), { comments: [] });
+          goToMain();
+        })
         .catch((err) => {
           alert("글쓰기가 실패했습니다.");
           console.log(err);

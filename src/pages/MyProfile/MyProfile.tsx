@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import styles from "./MyProfile.module.scss";
+import { TextInput, Button } from "joseph-ui-kit";
+import { db } from "../../firebase";
 import { getAuth, updateProfile } from "firebase/auth";
 import {
   getStorage,
@@ -7,16 +10,13 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../firebase";
-import { TextInput, Button } from "joseph-ui-kit";
-import styles from "./MyProfile.module.scss";
 import SignOut from "../../components/SignOut/SignOut";
-import { async } from "@firebase/util";
 
 const MyProfile = () => {
   const auth = getAuth();
 
   const user = auth?.currentUser;
+  console.log(user);
 
   const userimage =
     user?.photoURL === null || user?.photoURL === undefined
@@ -120,7 +120,15 @@ const MyProfile = () => {
       <div className={styles.subContainer}>
         <label htmlFor="upload" className={styles.imageWrapper}>
           {attachment ? (
-            <img className={styles.image} src={attachment} alt="userimage" />
+            <img
+              className={styles.image}
+              src={attachment}
+              alt="userimage"
+              onError={(e: any) =>
+                (e.target.src =
+                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-pictures.png?alt=media&token=0b467737-eb36-41df-9513-f674f8e6a121")
+              }
+            />
           ) : (
             <div className={styles.nullImage} />
           )}

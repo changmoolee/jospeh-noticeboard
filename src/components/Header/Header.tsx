@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Header.module.scss";
-import { useNavigate } from "react-router-dom";
+import { Button } from "joseph-ui-kit";
 import { getAuth } from "firebase/auth";
 import WritingIcon from "../../assets/icons/WritingIcon";
 import MyProfileIcon from "../../assets/icons/MyProfileIcon";
@@ -8,43 +8,50 @@ import MyProfileIcon from "../../assets/icons/MyProfileIcon";
 const Header = () => {
   const auth = getAuth();
 
-  const navigate = useNavigate();
-
-  const goToMain = () => {
-    navigate("/");
-  };
-
-  const goToSignIn = () => {
-    navigate("/signin");
-  };
-
-  const goToMyProfile = () => {
-    navigate("/myprofile");
-  };
-
-  const goToWriting = () => {
-    navigate("/writing");
-  };
-
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
         <div className={styles.container}>
-          <div className={styles.logo} onClick={goToMain}></div>
+          <a
+            className={styles.logo}
+            href="/"
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            joseph
+            <br />
+            noticeboard
+          </a>
           {auth.currentUser !== null ? (
             <div className={styles.rightIconContainer}>
-              <div className={styles.icon} onClick={goToWriting}>
+              <a
+                className={styles.icon}
+                href="/writing"
+                style={{ textDecoration: "none", color: "black" }}
+              >
                 <WritingIcon />
-              </div>
-              <div className={styles.icon} onClick={goToMyProfile}>
+              </a>
+              <a
+                className={styles.icon}
+                href="/myprofile"
+                style={{ textDecoration: "none", color: "black" }}
+              >
                 <MyProfileIcon />
-              </div>
+              </a>
             </div>
           ) : (
             <div className={styles.rightIconContainer}>
-              <div className={styles.login} onClick={goToSignIn}>
-                <span>로그인</span>
-              </div>
+              <a
+                href="/signin"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Button
+                  kind="ghost"
+                  name="로그인"
+                  width="80px"
+                  padding="0"
+                  position="center"
+                />
+              </a>
             </div>
           )}
         </div>

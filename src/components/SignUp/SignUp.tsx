@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import styles from "./SignUp.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput } from "joseph-ui-kit";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -52,8 +52,9 @@ const SignUp = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.inputlist}>
+      <form className={styles.inputlist}>
         <TextInput
+          id="email"
           label="이메일"
           type="email"
           placeholder="이메일을 입력해주세요"
@@ -62,6 +63,7 @@ const SignUp = () => {
           onChange={(data) => setEmail(data.value)}
         />
         <TextInput
+          id="password"
           label="비밀번호"
           type="password"
           placeholder="비밀번호를 입력해주세요"
@@ -69,14 +71,20 @@ const SignUp = () => {
           onChange={(data) => setPassword(data.value)}
         />
         <TextInput
+          id="confirmPassword"
           label="비밀번호 확인"
           type="password"
           placeholder="비밀번호를 다시 입력해주세요"
           warn={warnConfirmPassword}
           onChange={(data) => setConfirmPassword(data.value)}
         />
-      </div>
-      <Button width="200px" name="회원가입" onClick={onSubmit} />
+      </form>
+      <Button
+        kind="secondary"
+        width="200px"
+        name="회원가입"
+        onClick={onSubmit}
+      />
     </div>
   );
 };
