@@ -7,20 +7,33 @@ const Post = ({ post }: any) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>{post && post.title}</div>
+        <div className={styles.title}>{post.title}</div>
         <div className={styles.userInfo}>
           <div className={styles.userImageWrapper}>
             <UserImage userImageData={post.userImage} />
           </div>
           <div className={styles.nicknameAndTime}>
-            <div className={styles.userNickname}>
-              {post && post.userNickname}
-            </div>
-            <div className={styles.createdTime}>{post && post.createdTime}</div>
+            <div className={styles.userNickname}>{post.userNickname}</div>
+            <div className={styles.createdTime}>{post.createdTime}</div>
           </div>
         </div>
       </div>
-      <div className={styles.footer}>{post && post.content}</div>
+      <div className={styles.footer}>
+        <div className={styles.contentImageWrapper}>
+          {post.contentImage ? (
+            <img
+              className={styles.contentImage}
+              alt="contentImage"
+              src={post.contentImage}
+              onError={(e: any) =>
+                (e.target.src =
+                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-camera.png?alt=media&token=7e7b3794-bc4a-469f-92f5-bdba30ed5226")
+              }
+            />
+          ) : null}
+        </div>
+        {post.content}
+      </div>
       <CommentContainer post={post} />
     </div>
   );
