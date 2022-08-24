@@ -1,35 +1,31 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { getAuth, signOut } from "firebase/auth";
+import styles from "./SignOut.module.scss";
 import { Button } from "joseph-ui-kit";
+import { getAuth, signOut } from "firebase/auth";
 
 const SignOut = () => {
   const auth = getAuth();
-
-  const navigate = useNavigate();
-
-  const goToMain = () => {
-    navigate("/");
-  };
 
   const onClick = () =>
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        goToMain();
       })
-      .catch((error) => {
+      .catch((err) => {
         // An error happened.
+        console.log(err, "로그아웃에 실패하였습니다.");
       });
 
   return (
-    <Button
-      name="로그아웃"
-      width="100%"
-      padding="0"
-      position="center"
-      onClick={onClick}
-    />
+    <a href="/" className={styles.gotomain} onClick={onClick}>
+      <Button
+        kind="secondary"
+        name="로그아웃"
+        width="100%"
+        padding="0"
+        position="center"
+      />
+    </a>
   );
 };
 

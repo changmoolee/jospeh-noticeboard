@@ -38,20 +38,20 @@
   margin-right: 20px;
 }
 
-.nameAndTime {
+.nicknameAndTime {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.username {
+.userNickname {
   @include type.FixedHeadingStyles(heading01);
 }
 
 .createdTime {
   @include type.UtilityStyles(code01);
 }
-.userComment {
+.commentContent {
   @include type.BodyStyles(body02);
   padding: 20px;
   box-sizing: border-box;
