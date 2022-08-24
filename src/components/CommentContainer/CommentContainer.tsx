@@ -6,6 +6,7 @@ import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import Comment from "../Comment/Comment";
+import UserImage from "../UserImage/UserImage";
 
 const CommentContainer = ({ post }: any) => {
   const [typedCommentInput, setTypedCommentInput] = useState("");
@@ -84,19 +85,9 @@ const CommentContainer = ({ post }: any) => {
     <>
       {user ? (
         <div className={styles.commentBox}>
-          {userImage ? (
-            <img
-              className={styles.userImage}
-              alt="userimage"
-              src={userImage}
-              onError={(e: any) =>
-                (e.target.src =
-                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-pictures.png?alt=media&token=0b467737-eb36-41df-9513-f674f8e6a121")
-              }
-            />
-          ) : (
-            <div className={styles.nullImage} />
-          )}
+          <div className={styles.userImageWrapper}>
+            <UserImage userImageData={userImage} />
+          </div>
           <div className={styles.commentInputWrapper}>
             <TextInput
               width="100%"

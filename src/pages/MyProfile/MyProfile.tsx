@@ -11,6 +11,7 @@ import {
 } from "firebase/storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import SignOut from "../../components/SignOut/SignOut";
+import UserImage from "../../components/UserImage/UserImage";
 
 const MyProfile = () => {
   const auth = getAuth();
@@ -148,20 +149,8 @@ const MyProfile = () => {
   ) : (
     <div className={styles.container}>
       <div className={styles.subContainer}>
-        <label htmlFor="upload" className={styles.imageWrapper}>
-          {attachment ? (
-            <img
-              className={styles.image}
-              src={attachment}
-              alt="userimage"
-              onError={(e: any) =>
-                (e.target.src =
-                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-pictures.png?alt=media&token=0b467737-eb36-41df-9513-f674f8e6a121")
-              }
-            />
-          ) : (
-            <div className={styles.nullImage} />
-          )}
+        <label htmlFor="upload" className={styles.userImageWrapper}>
+          <UserImage userImageData={attachment} />
         </label>
         {isAuthLogin ? null : (
           <div className={styles.buttonWrapper}>
