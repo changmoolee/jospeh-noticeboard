@@ -10,6 +10,7 @@ import { uuidv4 } from "@firebase/util";
 const Writing = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [typedTitle, setTypedTitle] = useState("");
+  const [attachment, setAttachment] = useState("");
   const [typedContent, setContent] = useState("");
   const [warnTitleInput, setWarnTitleInput] = useState("");
   const [warnContentInput, setWarnContentInput] = useState("");
@@ -25,6 +26,24 @@ const Writing = () => {
 
   const goToMain = () => {
     navigate("/");
+  };
+
+  const onFileChange = (event: any) => {
+    const {
+      target: { files },
+    } = event;
+
+    const theFile = files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent: any) => {
+      const {
+        currentTarget: { result },
+      } = finishedEvent;
+
+      setAttachment(result);
+    };
+    reader.readAsDataURL(theFile);
   };
 
   const addPost = () => {
@@ -43,6 +62,7 @@ const Writing = () => {
         userNickname: userNickname,
         userImage: userImage,
         title: typedTitle,
+        contentImage: attachment,
         content: typedContent,
       })
         .then(() => {
@@ -85,6 +105,24 @@ const Writing = () => {
         hideLabel
         warn={warnTitleInput}
         onChange={(data) => setTypedTitle(data.value)}
+      />
+      <label htmlFor="upload" className={styles.uploadImageContainer}>
+        {attachment ? (
+          <img
+            className={styles.uploadImage}
+            src={attachment}
+            alt="contentImage"
+          />
+        ) : (
+          <div className={styles.uploadImageButton}>이미지 업로드</div>
+        )}
+      </label>
+      <input
+        style={{ display: "none" }}
+        id="upload"
+        type="file"
+        accept="image/*"
+        onChange={onFileChange}
       />
       <TextArea
         width="100%"
