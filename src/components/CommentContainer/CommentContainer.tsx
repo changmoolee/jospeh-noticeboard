@@ -9,6 +9,7 @@ import Comment from "../Comment/Comment";
 import UserImage from "../UserImage/UserImage";
 
 const CommentContainer = ({ post }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [typedCommentInput, setTypedCommentInput] = useState("");
   const [warnCommentInput, setWarnCommentInput] = useState("");
   const [isOpenMoreComments, isSetOpenMoreComments] = useState(false);
@@ -68,6 +69,7 @@ const CommentContainer = ({ post }: any) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const comment = getDoc(doc(db, "comment", post.postId));
 
     comment
@@ -75,11 +77,10 @@ const CommentContainer = ({ post }: any) => {
         if (doc.data()?.comments) {
           setCurrentComments(doc.data()?.comments);
         }
+        setIsLoading(false);
       })
       .catch((err) => console.log(err, "댓글 데이터를 불러오지 못했습니다."));
   }, [post.postId]);
-
-  console.log(user);
 
   return (
     <>
@@ -112,7 +113,9 @@ const CommentContainer = ({ post }: any) => {
           <a href="/signin"> 로그인</a>
         </div>
       )}
-      {currentComments?.length === 0 ? (
+      {isLoading ? (
+        <div className={styles.noComment} />
+      ) : currentComments?.length === 0 ? (
         <div className={styles.noComment}>댓글이 없습니다.</div>
       ) : currentComments?.length === 1 ? (
         <Comment comment={currentComments[0]} />
