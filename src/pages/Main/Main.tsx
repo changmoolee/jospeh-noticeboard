@@ -21,7 +21,9 @@ const Main = () => {
         });
       })
       .then(() => setIsLoading(false))
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        console.log(err, "게시물 데이터를 불러오는데 실패했습니다.")
+      );
   }, []);
 
   return isLoading ? (

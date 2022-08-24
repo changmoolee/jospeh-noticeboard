@@ -1,8 +1,41 @@
 @use "joseph-sass/type";
 
+.loadingContainer {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .container {
   @include type.FixedHeadingStyles(heading04);
   display: grid;
   row-gap: 20px;
   margin-top: 30px;
+}
+
+.uploadImageContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.uploadImage {
+  width: 100%;
+  max-width: 640px;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.uploadImageButton {
+  @include type.FixedHeadingStyles(heading03);
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 14px;
 }

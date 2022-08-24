@@ -22,36 +22,38 @@
   margin-top: 10px;
 }
 
-.userImage {
+.userImageWrapper {
   width: 50px;
   height: 50px;
-  border: 1px solid black;
-  border-radius: 50%;
   margin-right: 20px;
+  @media screen and (max-width: 900px) {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
 }
 
-.nullImage {
-  min-width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.3);
-  margin-right: 20px;
-}
-
-.nameAndTime {
+.nicknameAndTime {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.username {
-  @include type.FixedHeadingStyles(heading01);
+.userNickname {
+  @include type.FixedHeadingStyles(heading02);
+  @media screen and (max-width: 900px) {
+    @include type.FixedHeadingStyles(heading01);
+  }
 }
 
 .createdTime {
-  @include type.UtilityStyles(code01);
+  @include type.UtilityStyles(code02);
+  @media screen and (max-width: 900px) {
+    @include type.UtilityStyles(code01);
+  }
 }
-.userComment {
+
+.commentContent {
   @include type.BodyStyles(body02);
   padding: 20px;
   box-sizing: border-box;

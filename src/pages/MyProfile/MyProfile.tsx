@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./MyProfile.module.scss";
-import { TextInput, Button } from "joseph-ui-kit";
+import { TextInput, Button, Loading } from "joseph-ui-kit";
 import { db } from "../../firebase";
-import { getAuth, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import {
   getStorage,
   ref,
@@ -11,17 +11,12 @@ import {
 } from "firebase/storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import SignOut from "../../components/SignOut/SignOut";
+import UserImage from "../../components/UserImage/UserImage";
 
 const MyProfile = () => {
   const auth = getAuth();
 
   const user = auth?.currentUser;
-  console.log(user);
-
-  const userimage =
-    user?.photoURL === null || user?.photoURL === undefined
-      ? ""
-      : user?.photoURL;
 
   const isAuthLogin =
     user?.providerData[0].providerId === "github.com" ||
@@ -29,14 +24,25 @@ const MyProfile = () => {
       ? true
       : false;
 
-  const userId =
+  const userImage =
+    user?.providerData[0].photoURL === null ||
+    user?.providerData[0].photoURL === undefined
+      ? ""
+      : user?.providerData[0].photoURL;
+
+  const userNickname =
     user?.displayName === null || user?.displayName === undefined
       ? ""
       : user?.displayName;
 
-  const [attachment, setAttachment] = useState(userimage);
-  const [nickname, setNickname] = useState(userId);
-  const [nicknameWarn, setNicknameWarn] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [attachment, setAttachment] = useState(userImage);
+  const [typeNickname, setNickname] = useState(userNickname);
+  const [warnNicknameInput, setWarnNicknameInput] = useState("");
+
+  const clearAttachment = () => {
+    setAttachment("");
+  };
 
   const onFileChange = (event: any) => {
     const {
@@ -56,22 +62,18 @@ const MyProfile = () => {
     reader.readAsDataURL(theFile);
   };
 
-  const clearAttachment = () => {
-    setAttachment("");
-  };
-
   const onSubmit = async () => {
-    if (userId !== nickname) {
+    if (userNickname !== typeNickname) {
       const freeboardRef = collection(db, "freeboard");
 
-      const nicknameQuery = query(
+      const nicknameDataQuery = query(
         freeboardRef,
-        where("userId", "==", nickname)
+        where("userNickname", "==", typeNickname)
       );
 
-      const nicknameSnapshot = await getDocs(nicknameQuery);
+      const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
 
-      nicknameSnapshot.forEach((doc) => {
+      nicknameDataSnapshot.forEach((doc) => {
         if (doc.data()) {
           alert("이미 존재하는 닉네임입니다.");
           throw Error();
@@ -79,34 +81,40 @@ const MyProfile = () => {
       });
     }
 
-    if (nickname === "") {
-      setNicknameWarn("닉네임을 입력하세요.");
-    } else if (nickname.length < 2) {
-      setNicknameWarn("닉네임은 최소 2글자 이상이여야 합니다.");
+    if (typeNickname === "") {
+      setWarnNicknameInput("닉네임을 입력하세요.");
+    } else if (typeNickname.length < 2) {
+      setWarnNicknameInput("닉네임은 최소 2글자 이상이여야 합니다.");
     } else {
       if (user) {
-        if (attachment !== "" && userimage !== attachment) {
+        if (attachment !== "" && userImage !== attachment) {
+          // 첨부된 이미지가 새로운 파일일 경우
           const storage = getStorage();
-          const userimageRef = ref(storage, user.uid);
-          await uploadString(userimageRef, attachment, "data_url");
+          const userImageRef = ref(storage, user.uid);
+
+          await uploadString(userImageRef, attachment, "data_url");
 
           const url = await getDownloadURL(ref(storage, user.uid));
 
           await updateProfile(user, {
-            displayName: nickname,
+            displayName: typeNickname,
             photoURL: url,
           });
+
           setAttachment(url);
           alert("프로필 수정이 완료되었습니다.");
-        } else if (attachment !== "" && userimage === attachment) {
+        } else if (attachment !== "" && userImage === attachment) {
+          // 첨부된 이미지가 이전과 동일할 경우 (빈 이미지 x)
+
           await updateProfile(user, {
-            displayName: nickname,
+            displayName: typeNickname,
             photoURL: attachment,
           });
           alert("프로필 수정이 완료되었습니다.");
         } else {
+          // 첨부된 이미지가 빈 이미지일 경우
           await updateProfile(user, {
-            displayName: nickname,
+            displayName: typeNickname,
             photoURL: "",
           });
           alert("프로필 수정이 완료되었습니다.");
@@ -115,23 +123,34 @@ const MyProfile = () => {
     }
   };
 
-  return (
+  useEffect(() => {
+    setIsLoading(true);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        // const uid = user.uid;
+        // ...
+        if (user.providerData[0].photoURL) {
+          setAttachment(user.providerData[0].photoURL);
+        }
+      } else {
+        // User is signed out
+        // ...
+      }
+      setIsLoading(false);
+    });
+  }, []);
+
+  return isLoading ? (
+    <div className={styles.loadingContainer}>
+      <Loading />
+    </div>
+  ) : (
     <div className={styles.container}>
       <div className={styles.subContainer}>
-        <label htmlFor="upload" className={styles.imageWrapper}>
-          {attachment ? (
-            <img
-              className={styles.image}
-              src={attachment}
-              alt="userimage"
-              onError={(e: any) =>
-                (e.target.src =
-                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-pictures.png?alt=media&token=0b467737-eb36-41df-9513-f674f8e6a121")
-              }
-            />
-          ) : (
-            <div className={styles.nullImage} />
-          )}
+        <label htmlFor="upload" className={styles.userImageWrapper}>
+          <UserImage userImageData={attachment} />
         </label>
         {isAuthLogin ? null : (
           <div className={styles.buttonWrapper}>
@@ -143,9 +162,9 @@ const MyProfile = () => {
           </div>
         )}
         <TextInput
-          defaultValue={userId}
+          defaultValue={userNickname}
           label="닉네임"
-          warn={nicknameWarn}
+          warn={warnNicknameInput}
           disabled={isAuthLogin}
           placeholder="닉네임을 입력해 주세요."
           onChange={(data) => setNickname(data.value)}
