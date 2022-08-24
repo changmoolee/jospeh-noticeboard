@@ -26,6 +26,11 @@
   width: 50px;
   height: 50px;
   margin-right: 20px;
+  @media screen and (max-width: 900px) {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
 }
 
 .nicknameAndTime {
@@ -35,11 +40,17 @@
 }
 
 .userNickname {
-  @include type.FixedHeadingStyles(heading01);
+  @include type.FixedHeadingStyles(heading02);
+  @media screen and (max-width: 900px) {
+    @include type.FixedHeadingStyles(heading01);
+  }
 }
 
 .createdTime {
-  @include type.UtilityStyles(code01);
+  @include type.UtilityStyles(code02);
+  @media screen and (max-width: 900px) {
+    @include type.UtilityStyles(code01);
+  }
 }
 
 .commentContent {

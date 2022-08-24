@@ -32,8 +32,12 @@
   width: 50px;
   height: 50px;
   margin-right: 20px;
+  @media screen and (max-width: 900px) {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
 }
-
 .nicknameAndTime {
   display: flex;
   flex-direction: column;
@@ -41,17 +45,22 @@
 }
 
 .userNickname {
-  @include type.FixedHeadingStyles(heading01);
+  @include type.FixedHeadingStyles(heading02);
+  @media screen and (max-width: 900px) {
+    @include type.FixedHeadingStyles(heading01);
+  }
 }
 
 .createdTime {
-  @include type.UtilityStyles(code01);
+  @include type.UtilityStyles(code02);
+  @media screen and (max-width: 900px) {
+    @include type.UtilityStyles(code01);
+  }
 }
 
 .footer {
   @include type.BodyStyles(body02);
   width: 100%;
-  height: 150px;
   padding: 20px;
   border: 1px solid rgb(238, 238, 238);
   border-top: none;
@@ -59,4 +68,18 @@
   @media screen and (max-width: 900px) {
     @include type.BodyStyles(body01);
   }
+}
+
+.contentImageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.contentImage {
+  width: 100%;
+  max-width: 640px;
+  max-height: 400px;
+  object-fit: cover;
 }

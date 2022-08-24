@@ -16,14 +16,18 @@
 }
 
 .userImageWrapper {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 50px 0;
   border-radius: 50%;
   cursor: pointer;
+  @media screen and (max-width: 900px) {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 .buttonWrapper {
