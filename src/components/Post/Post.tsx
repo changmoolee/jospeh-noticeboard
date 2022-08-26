@@ -13,14 +13,16 @@ const Post = ({ post }: any) => {
             <UserImage userImageData={post.userImage} />
           </div>
           <div className={styles.nicknameAndTime}>
-            <div className={styles.userNickname}>{post.userNickname}</div>
+            <div className={styles.userNickname}>
+              {post.userNickname ? post.userNickname : "익명"}
+            </div>
             <div className={styles.createdTime}>{post.createdTime}</div>
           </div>
         </div>
       </div>
       <div className={styles.footer}>
-        <div className={styles.contentImageWrapper}>
-          {post.contentImage ? (
+        {post.contentImage ? (
+          <div className={styles.contentImageWrapper}>
             <img
               className={styles.contentImage}
               alt="contentImage"
@@ -30,9 +32,9 @@ const Post = ({ post }: any) => {
                   "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-camera.png?alt=media&token=7e7b3794-bc4a-469f-92f5-bdba30ed5226")
               }
             />
-          ) : null}
-        </div>
-        {post.content}
+          </div>
+        ) : null}
+        <p className={styles.contentText}>{post.content}</p>
       </div>
       <CommentContainer post={post} />
     </div>

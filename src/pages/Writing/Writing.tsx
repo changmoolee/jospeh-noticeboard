@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Writing.module.scss";
 import { useNavigate } from "react-router-dom";
-import { TextInput, TextArea, Button, Loading } from "joseph-ui-kit";
+import { TextInput, TextArea, Button } from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
+import LoadingState from "../../components/LoadingState/LoadingState";
 
 const Writing = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -87,15 +88,15 @@ const Writing = () => {
       } else {
         // User is signed out
         // ...
+        alert("잘못된 접근입니다.");
+        goToMain();
       }
       setIsLoading(false);
     });
   }, []);
 
   return isLoading ? (
-    <div className={styles.loadingContainer}>
-      <Loading />
-    </div>
+    <LoadingState />
   ) : (
     <div className={styles.container}>
       글쓰기
@@ -104,6 +105,7 @@ const Writing = () => {
         placeholder="제목을 입력해 주세요."
         hideLabel
         warn={warnTitleInput}
+        maxLength={50}
         onChange={(data) => setTypedTitle(data.value)}
       />
       <label htmlFor="upload" className={styles.uploadImageContainer}>
@@ -129,6 +131,7 @@ const Writing = () => {
         placeholder="내용을 입력해 주세요."
         hideLabel
         warn={warnContentInput}
+        maxLength={1000}
         onChange={(data) => setContent(data.value)}
       />
       <Button

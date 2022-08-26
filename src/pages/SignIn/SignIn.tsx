@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./SignIn.module.scss";
 import { useNavigate } from "react-router-dom";
-import { Button, Modal, TextInput } from "joseph-ui-kit";
+import { Button, TextInput } from "joseph-ui-kit";
 import {
   getAuth,
+  onAuthStateChanged,
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import SignUp from "../../components/SignUp/SignUp";
+import LoadingState from "../../components/LoadingState/LoadingState";
 
 const SignIn = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +35,8 @@ const SignIn = () => {
   };
 
   const auth = getAuth();
+
+  const user = auth?.currentUser;
 
   const onSignIn = (event: any) => {
     signInWithEmailAndPassword(auth, email, password)
@@ -60,10 +65,6 @@ const SignIn = () => {
   const githubProvider = new GithubAuthProvider();
 
   const onGoogleClick = (event: any) => {
-    const {
-      target: { name },
-    } = event;
-
     signInWithPopup(auth, googleProvider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -71,8 +72,9 @@ const SignIn = () => {
         // const token = credential && credential.accessToken;
         // The signed-in user info.
         // const user = result.user;
-        goToMain();
         // ...
+        alert("로그인이 되었습니다.");
+        goToMain();
       })
       .catch((error) => {
         // Handle Errors here.
@@ -100,6 +102,7 @@ const SignIn = () => {
         // The signed-in user info.
         // const user = result.user;
         // ...
+        alert("로그인이 되었습니다.");
         goToMain();
       })
       .catch((error) => {
@@ -119,7 +122,30 @@ const SignIn = () => {
       });
   };
 
-  return (
+  useEffect(() => {
+    setIsLoading(true);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        // const uid = user.uid;
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
+      setIsLoading(false);
+    });
+  }, [auth]);
+
+  return isLoading ? (
+    <LoadingState />
+  ) : user ? (
+    <div className={styles.wrongApproach}>
+      이미 로그인이 되어 있습니다.
+      <a href="/">메인으로 이동하기</a>
+    </div>
+  ) : (
     <>
       <form className={styles.inputlist}>
         <TextInput
