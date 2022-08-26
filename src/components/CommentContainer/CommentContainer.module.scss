@@ -10,6 +10,8 @@
 .userImageWrapper {
   width: 40px;
   height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   margin-right: 5px;
 }
 
@@ -20,7 +22,7 @@
 .noComment {
   @include type.BodyStyles(body02);
   width: 100%;
-  height: 166px;
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
