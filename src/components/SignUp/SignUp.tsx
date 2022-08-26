@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import styles from "./SignUp.module.scss";
 import { useNavigate } from "react-router-dom";
-import { TextInput, Modal } from "joseph-ui-kit";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { TextInput, Modal, Button } from "joseph-ui-kit";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../../firebase";
+import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import LoadingState from "../LoadingState/LoadingState";
 
 const SignUp = ({ closeSignUpModal }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [typedNickname, setTypedNickname] = useState("");
   const [typedEmail, setTypedEmail] = useState("");
   const [typedPassword, setTypedPassword] = useState("");
   const [typedConfirmPassword, setTypedConfirmPassword] = useState("");
+  const [warnNicknameInput, setWarnNicknameInput] = useState("");
   const [warnEmailInput, setWarnEmailInput] = useState("");
   const [warnPasswordInput, setWarnPasswordInput] = useState("");
   const [warnConfirmPasswordInput, setWarnConfirmPasswordInput] = useState("");
@@ -20,38 +30,89 @@ const SignUp = ({ closeSignUpModal }: any) => {
     navigate("/");
   };
 
+  const goToMyProfile = () => {
+    navigate("/myprofile");
+  };
+
+  const checkNicknameDuplicate = async () => {
+    if (typedNickname === "") {
+      setWarnNicknameInput("닉네임을 입력하세요.");
+    } else if (typedNickname.length < 2) {
+      setWarnNicknameInput("닉네임은 최소 2글자 이상이여야 합니다.");
+    } else {
+      const nicknameRef = collection(db, "userNickname");
+
+      const nicknameDataQuery = query(
+        nicknameRef,
+        where("nickname", "==", typedNickname)
+      );
+
+      const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
+
+      nicknameDataSnapshot.forEach((doc) => {
+        if (doc.data()) {
+          alert("이미 존재하는 닉네임입니다.");
+          throw Error();
+        }
+      });
+      alert("사용 가능한 닉네임입니다.");
+    }
+  };
+
   const requestSignUp = () => {
+    setIsLoading(true);
     const expEmail = /^[A-Za-z0-9]*@[A-Za-z0-9]*.[A-Za-z]{2,3}$/;
     if (!expEmail.test(typedEmail)) {
       setWarnEmailInput("이메일 형식에 맞지 않습니다.");
-      return;
     } else if (typedPassword.length < 6) {
       setWarnEmailInput("");
       setWarnPasswordInput("비밀번호는 6자 이상 설정해 주세요.");
-      return;
     } else if (typedPassword !== typedConfirmPassword) {
       setWarnPasswordInput("");
       setWarnConfirmPasswordInput("비밀번호가 같지 않습니다.");
-      return;
     }
     createUserWithEmailAndPassword(auth, typedEmail, typedPassword)
       .then((userCredential) => {
         // Signed in
-        // const user = userCredential.user;
-        setTypedEmail("");
-        setTypedPassword("");
+        const user = userCredential.user;
+
         // ...
-        goToMain();
+        updateProfile(user, {
+          displayName: typedNickname,
+        })
+          .then(() => {
+            setTypedEmail("");
+            setTypedPassword("");
+            alert("회원가입이 완료되었습니다.");
+            goToMain();
+          })
+          .catch((err) => {
+            console.log(
+              err,
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 다시 시도해 주세요."
+            );
+            alert(
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 다시 시도해 주세요."
+            );
+            goToMyProfile();
+          });
+        addDoc(collection(db, "userNickname"), { nickname: typedNickname });
       })
       .catch((err) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
+        const errorCode = err.code;
+        // const errorMessage = err.message;
         // ..
         console.log(err, "회원가입을 실패했습니다.");
+        if (errorCode === "auth/email-already-in-use") {
+          alert("이미 가입된 이메일입니다.");
+        }
       });
+    setIsLoading(false);
   };
 
-  return (
+  return isLoading ? (
+    <LoadingState />
+  ) : (
     <Modal
       width="400px"
       height="auto"
@@ -65,6 +126,21 @@ const SignUp = ({ closeSignUpModal }: any) => {
     >
       <div className={styles.container}>
         <form className={styles.inputlist}>
+          <TextInput
+            id="nickname"
+            label="닉네임"
+            type="nickname"
+            placeholder="닉네임을 입력해주세요"
+            warn={warnNicknameInput}
+            maxLength={10}
+            onChange={(data) => setTypedNickname(data.value)}
+          />
+          <Button
+            width="120px"
+            kind="secondary"
+            name="닉네임 중복 확인"
+            onClick={checkNicknameDuplicate}
+          />
           <TextInput
             id="email"
             label="이메일"

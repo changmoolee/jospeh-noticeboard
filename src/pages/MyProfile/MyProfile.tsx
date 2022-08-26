@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./MyProfile.module.scss";
-import { TextInput, Button, Loading } from "joseph-ui-kit";
+import { useNavigate } from "react-router-dom";
+import { TextInput, Button } from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import {
@@ -9,9 +10,10 @@ import {
   uploadString,
   getDownloadURL,
 } from "firebase/storage";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import SignOut from "../../components/SignOut/SignOut";
 import UserImage from "../../components/UserImage/UserImage";
+import LoadingState from "../../components/LoadingState/LoadingState";
 
 const MyProfile = () => {
   const auth = getAuth();
@@ -37,8 +39,14 @@ const MyProfile = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [attachment, setAttachment] = useState(userImage);
-  const [typeNickname, setNickname] = useState(userNickname);
+  const [typedNickname, setTypedNickname] = useState(userNickname);
   const [warnNicknameInput, setWarnNicknameInput] = useState("");
+
+  const navigate = useNavigate();
+
+  const goToMain = () => {
+    navigate("/");
+  };
 
   const clearAttachment = () => {
     setAttachment("");
@@ -63,61 +71,68 @@ const MyProfile = () => {
   };
 
   const onSubmit = async () => {
-    if (userNickname !== typeNickname) {
-      const freeboardRef = collection(db, "freeboard");
-
-      const nicknameDataQuery = query(
-        freeboardRef,
-        where("userNickname", "==", typeNickname)
-      );
-
-      const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
-
-      nicknameDataSnapshot.forEach((doc) => {
-        if (doc.data()) {
-          alert("이미 존재하는 닉네임입니다.");
-          throw Error();
-        }
-      });
-    }
-
-    if (typeNickname === "") {
-      setWarnNicknameInput("닉네임을 입력하세요.");
-    } else if (typeNickname.length < 2) {
-      setWarnNicknameInput("닉네임은 최소 2글자 이상이여야 합니다.");
+    if (user === null) {
+      alert("로그인이 되어있지 않습니다. 잘못된 접근입니다.");
+      goToMain();
     } else {
-      if (user) {
-        if (attachment !== "" && userImage !== attachment) {
-          // 첨부된 이미지가 새로운 파일일 경우
-          const storage = getStorage();
-          const userImageRef = ref(storage, user.uid);
+      if (userNickname !== typedNickname) {
+        const nicknameRef = collection(db, "userNickname");
 
-          await uploadString(userImageRef, attachment, "data_url");
+        const nicknameDataQuery = query(
+          nicknameRef,
+          where("nickname", "==", typedNickname)
+        );
 
-          const url = await getDownloadURL(ref(storage, user.uid));
+        const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
 
-          await updateProfile(user, {
-            displayName: typeNickname,
-            photoURL: url,
-          });
+        nicknameDataSnapshot.forEach((doc) => {
+          if (doc.data()) {
+            alert("이미 존재하는 닉네임입니다.");
+            throw Error();
+          }
+        });
+      }
 
-          setAttachment(url);
-          alert("프로필 수정이 완료되었습니다.");
-        } else if (attachment !== "" && userImage === attachment) {
-          // 첨부된 이미지가 이전과 동일할 경우 (빈 이미지 x)
+      if (typedNickname === "") {
+        setWarnNicknameInput("닉네임을 입력하세요.");
+      } else if (typedNickname.length < 2) {
+        setWarnNicknameInput("닉네임은 최소 2글자 이상이여야 합니다.");
+      } else {
+        if (user) {
+          if (attachment !== "" && userImage !== attachment) {
+            // 첨부된 이미지가 새로운 파일일 경우
+            const storage = getStorage();
+            const userImageRef = ref(storage, user.uid);
 
-          await updateProfile(user, {
-            displayName: typeNickname,
-            photoURL: attachment,
-          });
-          alert("프로필 수정이 완료되었습니다.");
-        } else {
-          // 첨부된 이미지가 빈 이미지일 경우
-          await updateProfile(user, {
-            displayName: typeNickname,
-            photoURL: "",
-          });
-          alert("프로필 수정이 완료되었습니다.");
+            await uploadString(userImageRef, attachment, "data_url");
+
+            const url = await getDownloadURL(ref(storage, user.uid));
+
+            await updateProfile(user, {
+              displayName: typedNickname,
+              photoURL: url,
+            });
+
+            addDoc(collection(db, "userNickname"), { nickname: typedNickname });
+
+            setAttachment(url);
+            alert("프로필 수정이 완료되었습니다.");
+          } else if (attachment !== "" && userImage === attachment) {
+            // 첨부된 이미지가 이전과 동일할 경우 (빈 이미지 x)
+
+            await updateProfile(user, {
+              displayName: typedNickname,
+              photoURL: attachment,
+            });
+            alert("프로필 수정이 완료되었습니다.");
+          } else {
+            // 첨부된 이미지가 빈 이미지일 경우
+            await updateProfile(user, {
+              displayName: typedNickname,
+              photoURL: "",
+            });
+            alert("프로필 수정이 완료되었습니다.");
+          }
         }
       }
     }
@@ -134,6 +149,9 @@ const MyProfile = () => {
         if (user.providerData[0].photoURL) {
           setAttachment(user.providerData[0].photoURL);
         }
+        if (user.displayName) {
+          setTypedNickname(user?.displayName);
+        }
       } else {
         // User is signed out
         // ...
@@ -143,9 +161,7 @@ const MyProfile = () => {
   }, []);
 
   return isLoading ? (
-    <div className={styles.loadingContainer}>
-      <Loading />
-    </div>
+    <LoadingState />
   ) : (
     <div className={styles.container}>
       <div className={styles.subContainer}>
@@ -167,7 +183,7 @@ const MyProfile = () => {
           warn={warnNicknameInput}
           disabled={isAuthLogin}
           placeholder="닉네임을 입력해 주세요."
-          onChange={(data) => setNickname(data.value)}
+          onChange={(data) => setTypedNickname(data.value)}
         />
         <div className={styles.buttonContainer}>
           {isAuthLogin ? (
