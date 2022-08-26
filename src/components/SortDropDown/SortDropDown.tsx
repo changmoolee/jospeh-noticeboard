@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styles from "./SortDropDown.module.scss";
-import { Button, DropDown } from "joseph-ui-kit";
+import { DropDown } from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 const items = [
-  { id: "asc", value: "최신순" },
-  { id: "desc", value: "오래된순" },
+  { id: "desc", value: "최신순" },
+  { id: "asc", value: "오래된순" },
 ];
 
 const SortDropDown = ({ setIsLoading, setPosts }: any) => {
-  const [sortMode, setSortMode] = useState<"asc" | "desc">("asc");
+  const [sortMode, setSortMode] = useState<"asc" | "desc">("desc");
 
   const freeboardRef = collection(db, "freeboard");
 
@@ -19,12 +19,11 @@ const SortDropDown = ({ setIsLoading, setPosts }: any) => {
   useEffect(() => {
     setPosts([]);
     setIsLoading(true);
-
     getDocs(first)
       .then((res) => {
         res.forEach((doc: any) => {
           // doc.data() is never undefined for query doc snapshots
-          setPosts((prev: any) => [doc.data(), ...prev]);
+          setPosts((prev: any) => [...prev, doc.data()]);
         });
       })
       .then(() => {
