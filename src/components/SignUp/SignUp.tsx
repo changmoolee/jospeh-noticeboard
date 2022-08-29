@@ -16,8 +16,10 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import LoadingState from "../LoadingState/LoadingState";
 
 const SignUp = ({ closeSignUpModal }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isDuplicateNickname, setIsDuplicateNickname] = useState(false);
   const [typedNickname, setTypedNickname] = useState("");
   const [typedEmail, setTypedEmail] = useState("");
@@ -78,16 +80,19 @@ const SignUp = ({ closeSignUpModal }: any) => {
     }
     const expEmail = /^[A-Za-z0-9]*@[A-Za-z0-9]*.[A-Za-z]{2,3}$/;
     if (!expEmail.test(typedEmail)) {
+      alert("이메일 형식에 맞지 않습니다.");
       setWarnEmailInput("이메일 형식에 맞지 않습니다.");
-    } else if (typedPassword.length < 6) {
-      setWarnEmailInput("");
-      setWarnPasswordInput("비밀번호는 6자 이상 설정해 주세요.");
+      throw Error();
     } else if (typedPassword !== typedConfirmPassword) {
       setWarnPasswordInput("");
-      setWarnConfirmPasswordInput("비밀번호가 같지 않습니다.");
+      setWarnConfirmPasswordInput("비밀번호 확인이 일치하지 않습니다.");
+      throw Error();
     }
+
     createUserWithEmailAndPassword(auth, typedEmail, typedPassword)
       .then((userCredential) => {
+        setIsLoading(true);
+
         // Signed in
         const user = userCredential.user;
 
@@ -99,15 +104,16 @@ const SignUp = ({ closeSignUpModal }: any) => {
             setTypedEmail("");
             setTypedPassword("");
             alert("회원가입이 완료되었습니다.");
+            setIsLoading(false);
             goToMain();
           })
           .catch((err) => {
             console.log(
               err,
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
             );
             alert(
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
             );
             goToMyProfile();
           });
@@ -123,72 +129,85 @@ const SignUp = ({ closeSignUpModal }: any) => {
         console.log(err, "회원가입을 실패했습니다.");
         if (errorCode === "auth/email-already-in-use") {
           alert("이미 가입된 이메일입니다.");
+          setWarnEmailInput("이미 가입된 이메일입니다.");
+        }
+        if (errorCode === "auth/invalid-email") {
+          alert("이메일 형식에 맞지 않습니다.");
+          setWarnEmailInput("이메일 형식에 맞지 않습니다.");
+        }
+        if (errorCode === "auth/weak-password") {
+          alert("비밀번호는 6자 이상 설정해 주세요.");
+          setWarnEmailInput("");
+          setWarnPasswordInput("비밀번호는 6자 이상 설정해 주세요.");
         }
       });
   };
 
   return (
-    <Modal
-      width="400px"
-      height="auto"
-      label="회원가입"
-      title="회원가입"
-      closeModal={closeSignUpModal}
-      firstButtonText="회원가입"
-      secondaryButtonText="취소"
-      firstButtonOnClick={requestSignUp}
-      secondaryButtonOnClick={closeSignUpModal}
-    >
-      <div className={styles.container}>
-        <form className={styles.inputlist}>
-          <TextInput
-            id="nickname"
-            label="닉네임"
-            type="nickname"
-            placeholder="닉네임을 입력해주세요"
-            warn={warnNicknameInput}
-            maxLength={10}
-            onChange={(data) => {
-              setTypedNickname(data.value);
-              setIsDuplicateNickname(true);
-            }}
-          />
-          <Button
-            width="120px"
-            kind="secondary"
-            name="닉네임 중복 확인"
-            onClick={checkNickname}
-          />
-          <TextInput
-            id="email"
-            label="이메일"
-            type="email"
-            placeholder="이메일을 입력해주세요"
-            warn={warnEmailInput}
-            maxLength={50}
-            onChange={(data) => setTypedEmail(data.value)}
-          />
-          <TextInput
-            id="password"
-            label="비밀번호"
-            type="password"
-            placeholder="비밀번호를 입력해주세요"
-            warn={warnPasswordInput}
-            maxLength={50}
-            onChange={(data) => setTypedPassword(data.value)}
-          />
-          <TextInput
-            id="confirmPassword"
-            label="비밀번호 확인"
-            type="password"
-            placeholder="비밀번호를 다시 입력해주세요"
-            warn={warnConfirmPasswordInput}
-            maxLength={50}
-            onChange={(data) => setTypedConfirmPassword(data.value)}
-          />
-        </form>
-      </div>
-    </Modal>
+    <>
+      <Modal
+        width="400px"
+        height="auto"
+        label="회원가입"
+        title="회원가입"
+        closeModal={closeSignUpModal}
+        firstButtonText="회원가입"
+        secondaryButtonText="취소"
+        firstButtonOnClick={requestSignUp}
+        secondaryButtonOnClick={closeSignUpModal}
+      >
+        <div className={styles.container}>
+          <form className={styles.inputlist}>
+            <TextInput
+              id="nickname"
+              label="닉네임"
+              type="nickname"
+              placeholder="닉네임을 입력해주세요"
+              warn={warnNicknameInput}
+              maxLength={10}
+              onChange={(data) => {
+                setTypedNickname(data.value);
+                setIsDuplicateNickname(true);
+              }}
+            />
+            <Button
+              width="120px"
+              kind="secondary"
+              name="닉네임 중복 확인"
+              onClick={checkNickname}
+            />
+            <TextInput
+              id="email"
+              label="이메일"
+              type="email"
+              placeholder="이메일을 입력해주세요"
+              warn={warnEmailInput}
+              maxLength={50}
+              onChange={(data) => setTypedEmail(data.value)}
+            />
+            <TextInput
+              id="password"
+              label="비밀번호"
+              type="password"
+              placeholder="비밀번호를 입력해주세요"
+              warn={warnPasswordInput}
+              maxLength={50}
+              onChange={(data) => setTypedPassword(data.value)}
+            />
+            <TextInput
+              id="confirmPassword"
+              label="비밀번호 확인"
+              type="password"
+              placeholder="비밀번호를 다시 입력해주세요"
+              warn={warnConfirmPasswordInput}
+              maxLength={50}
+              onChange={(data) => setTypedConfirmPassword(data.value)}
+            />
+          </form>
+        </div>
+        {isLoading ? <LoadingState /> : <></>}
+      </Modal>
+    </>
   );
 };
 

@@ -72,12 +72,15 @@ const Writing = () => {
         content: typedContent,
       })
         .then(() => {
+          setIsLoading(true);
           setDoc(doc(db, "comment", postId), { comments: [] });
           alert("게시물이 등록되었습니다.");
+          setIsLoading(false);
           goToMain();
         })
         .catch((err) => {
           alert("글쓰기가 실패했습니다.");
+          setIsLoading(false);
           console.log(err);
         });
     }

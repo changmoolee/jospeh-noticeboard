@@ -6,8 +6,10 @@ import { db } from "../../firebase";
 import { deleteUser } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, deleteObject } from "firebase/storage";
+import LoadingState from "../LoadingState/LoadingState";
 
 const Withdrawal = ({ user }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -21,13 +23,18 @@ const Withdrawal = ({ user }: any) => {
   const closeModal = () => setIsModalOpen(false);
 
   const withdrawFromApp = async () => {
+    setIsLoading(true);
     deleteUser(user)
       .then(() => {
         alert("회원탈퇴가 완료되었습니다.");
+        setIsLoading(false);
+        closeModal();
+        goToMain();
       })
       .catch((err) => {
         console.log(err);
         alert("회원탈퇴에 실패했습니다.");
+        setIsLoading(false);
       });
     await deleteDoc(doc(db, "userNickname", user.uid));
     // 닉네임 컬렉션(닉네임 중복 여부 확인)에서도 삭제
@@ -46,9 +53,6 @@ const Withdrawal = ({ user }: any) => {
         });
     }
     // storage에서 유저 이미지가 등록되어 있다면 삭제
-
-    closeModal();
-    goToMain();
   };
 
   return (
@@ -72,10 +76,16 @@ const Withdrawal = ({ user }: any) => {
           closeModal={closeModal}
         >
           <p className={styles.paragraph}>
-            회원탈퇴시 게시했던 게시물과 댓글들은 보존됩니다. <br />
+            <span>회원탈퇴시,</span>
             <br />
-            정말로 탈퇴하시겠습니까?
+            <br />
+            사용자가 게시했던 게시물과 댓글들을 제외한, 사용자의 프로필 이미지,
+            닉네임은 삭제됩니다.
+            <br />
+            <br />
+            <span>정말로 탈퇴하시겠습니까?</span>
           </p>
+          {isLoading ? <LoadingState /> : <></>}
         </Modal>
       ) : null}
     </>
