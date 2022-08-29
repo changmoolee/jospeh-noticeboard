@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Writing.module.scss";
 import { useNavigate } from "react-router-dom";
-import { TextInput, TextArea, Button } from "joseph-ui-kit";
+import {
+  TextInput,
+  FileUploaderDropContainer,
+  TextArea,
+  Button,
+} from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -10,8 +15,8 @@ import LoadingState from "../../components/LoadingState/LoadingState";
 
 const Writing = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [typedTitle, setTypedTitle] = useState("");
   const [attachment, setAttachment] = useState("");
+  const [typedTitle, setTypedTitle] = useState("");
   const [typedContent, setContent] = useState("");
   const [warnTitleInput, setWarnTitleInput] = useState("");
   const [warnContentInput, setWarnContentInput] = useState("");
@@ -27,24 +32,6 @@ const Writing = () => {
 
   const goToMain = () => {
     navigate("/");
-  };
-
-  const onFileChange = (event: any) => {
-    const {
-      target: { files },
-    } = event;
-
-    const theFile = files[0];
-
-    const reader = new FileReader();
-    reader.onloadend = (finishedEvent: any) => {
-      const {
-        currentTarget: { result },
-      } = finishedEvent;
-
-      setAttachment(result);
-    };
-    reader.readAsDataURL(theFile);
   };
 
   const addPost = () => {
@@ -108,23 +95,10 @@ const Writing = () => {
         maxLength={50}
         onChange={(data) => setTypedTitle(data.value)}
       />
-      <label htmlFor="upload" className={styles.uploadImageContainer}>
-        {attachment ? (
-          <img
-            className={styles.uploadImage}
-            src={attachment}
-            alt="contentImage"
-          />
-        ) : (
-          <div className={styles.uploadImageButton}>이미지 업로드</div>
-        )}
-      </label>
-      <input
-        style={{ display: "none" }}
-        id="upload"
-        type="file"
-        accept="image/*"
-        onChange={onFileChange}
+      <FileUploaderDropContainer
+        width="100%"
+        labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요."
+        onChange={(_, data) => setAttachment(data.result)}
       />
       <TextArea
         width="100%"
