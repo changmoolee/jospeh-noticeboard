@@ -19,6 +19,14 @@
   flex-grow: 1;
 }
 
+.noSignInComment {
+  @include type.BodyStyles(body02);
+  margin-top: 20px;
+  @media screen and (max-width: 900px) {
+    @include type.BodyStyles(body01);
+  }
+}
+
 .noComment {
   @include type.BodyStyles(body02);
   width: 100%;
@@ -28,4 +36,7 @@
   align-items: center;
   margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 900px) {
+    @include type.BodyStyles(body01);
+  }
 }

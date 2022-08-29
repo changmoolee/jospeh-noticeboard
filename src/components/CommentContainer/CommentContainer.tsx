@@ -108,7 +108,7 @@ const CommentContainer = ({ post }: any) => {
           />
         </div>
       ) : (
-        <div style={{ marginTop: "20px" }}>
+        <div className={styles.noSignInComment}>
           댓글을 남기려면
           <a href="/signin"> 로그인</a>
         </div>

@@ -18,10 +18,10 @@
 }
 
 .title {
-  @include type.FixedHeadingStyles(heading03);
+  @include type.BodyStyles(body02);
   overflow-wrap: break-word;
   @media screen and (max-width: 900px) {
-    @include type.FixedHeadingStyles(heading01);
+    @include type.BodyStyles(body01);
   }
 }
 
@@ -81,12 +81,13 @@
 
 .contentImage {
   width: 100%;
-  max-width: 640px;
-  max-height: 400px;
   object-fit: cover;
 }
 
 .contentText {
-  padding: 20px;
+  padding: 30px;
   box-sizing: border-box;
+  @media screen and (max-width: 900px) {
+    padding: 20px;
+  }
 }
