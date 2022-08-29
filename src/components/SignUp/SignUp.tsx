@@ -8,7 +8,14 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { db } from "../../firebase";
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import LoadingState from "../LoadingState/LoadingState";
 
 const SignUp = ({ closeSignUpModal }: any) => {
@@ -96,7 +103,10 @@ const SignUp = ({ closeSignUpModal }: any) => {
             );
             goToMyProfile();
           });
-        addDoc(collection(db, "userNickname"), { nickname: typedNickname });
+
+        setDoc(doc(db, "userNickname", user.uid), {
+          nickname: typedNickname,
+        });
       })
       .catch((err) => {
         const errorCode = err.code;

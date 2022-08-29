@@ -9,11 +9,20 @@ import {
   ref,
   uploadString,
   getDownloadURL,
+  deleteObject,
 } from "firebase/storage";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import SignOut from "../../components/SignOut/SignOut";
 import UserImage from "../../components/UserImage/UserImage";
 import LoadingState from "../../components/LoadingState/LoadingState";
+import Withdrawal from "../../components/Withdrawal/Withdrawal";
 
 const MyProfile = () => {
   const auth = getAuth();
@@ -71,6 +80,7 @@ const MyProfile = () => {
   };
 
   const onSubmit = async () => {
+    setIsLoading(true);
     if (user === null) {
       alert("로그인이 되어있지 않습니다. 잘못된 접근입니다.");
       goToMain();
@@ -100,9 +110,21 @@ const MyProfile = () => {
       } else {
         if (user) {
           if (attachment !== "" && userImage !== attachment) {
-            // 첨부된 이미지가 새로운 파일일 경우
+            // 첨부된 이미지 파일이 null이 아니고 / 이전과 다른 새로운 이미지 파일일 경우
             const storage = getStorage();
             const userImageRef = ref(storage, user.uid);
+
+            if (userImage !== "") {
+              // 이전에 저장된 프로필 이미지가 있었다면 삭제해준다.
+              deleteObject(userImageRef)
+                .then(() => {
+                  // File deleted successfully
+                })
+                .catch((error) => {
+                  // Uh-oh, an error occurred!
+                  console.log(error, "유저 이미지 삭제에 실패했습니다.");
+                });
+            }
 
             await uploadString(userImageRef, attachment, "data_url");
 
@@ -113,29 +135,57 @@ const MyProfile = () => {
               photoURL: url,
             });
 
-            addDoc(collection(db, "userNickname"), { nickname: typedNickname });
+            updateDoc(doc(db, "userNickname", user.uid), {
+              nickname: typedNickname,
+            });
 
             setAttachment(url);
             alert("프로필 수정이 완료되었습니다.");
           } else if (attachment !== "" && userImage === attachment) {
-            // 첨부된 이미지가 이전과 동일할 경우 (빈 이미지 x)
+            // 첨부된 이미지가 이전과 동일할 경우 (null 이미지 x)
 
             await updateProfile(user, {
               displayName: typedNickname,
               photoURL: attachment,
             });
+
+            updateDoc(doc(db, "userNickname", user.uid), {
+              nickname: typedNickname,
+            });
+
             alert("프로필 수정이 완료되었습니다.");
           } else {
-            // 첨부된 이미지가 빈 이미지일 경우
+            // 첨부된 이미지가 null 이미지일 경우
+            const storage = getStorage();
+            const userImageRef = ref(storage, user.uid);
+
+            if (userImage !== "") {
+              // 이전에 저장된 프로필 이미지가 있었다면 삭제해준다.
+              deleteObject(userImageRef)
+                .then(() => {
+                  // File deleted successfully
+                })
+                .catch((error) => {
+                  // Uh-oh, an error occurred!
+                  console.log(error, "유저 이미지 삭제에 실패했습니다.");
+                });
+            }
+
             await updateProfile(user, {
               displayName: typedNickname,
               photoURL: "",
             });
+
+            updateDoc(doc(db, "userNickname", user.uid), {
+              nickname: typedNickname,
+            });
+
             alert("프로필 수정이 완료되었습니다.");
           }
         }
       }
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -190,14 +240,15 @@ const MyProfile = () => {
             <span>OAuth 2.0으로 로그인 시, 프로필 수정은 불가합니다.</span>
           ) : (
             <Button
-              width="100%"
               name="프로필 수정"
+              width="100%"
               padding="0"
               position="center"
               onClick={onSubmit}
             />
           )}
           <SignOut />
+          <Withdrawal user={user} />
         </div>
       </div>
       {isAuthLogin ? null : (
