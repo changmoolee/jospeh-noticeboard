@@ -16,10 +16,9 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import LoadingState from "../LoadingState/LoadingState";
 
 const SignUp = ({ closeSignUpModal }: any) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isDuplicateNickname, setIsDuplicateNickname] = useState(false);
   const [typedNickname, setTypedNickname] = useState("");
   const [typedEmail, setTypedEmail] = useState("");
   const [typedPassword, setTypedPassword] = useState("");
@@ -42,32 +41,41 @@ const SignUp = ({ closeSignUpModal }: any) => {
   };
 
   const checkNicknameDuplicate = async () => {
+    const nicknameRef = collection(db, "userNickname");
+
+    const nicknameDataQuery = query(
+      nicknameRef,
+      where("nickname", "==", typedNickname)
+    );
+
+    const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
+
+    nicknameDataSnapshot.forEach((doc) => {
+      if (doc.data()) {
+        setIsDuplicateNickname(true);
+        alert("이미 존재하는 닉네임입니다.");
+        throw Error();
+      }
+    });
+    setIsDuplicateNickname(false);
+    alert("사용 가능한 닉네임입니다.");
+  };
+
+  const checkNickname = async () => {
     if (typedNickname === "") {
       setWarnNicknameInput("닉네임을 입력하세요.");
     } else if (typedNickname.length < 2) {
       setWarnNicknameInput("닉네임은 최소 2글자 이상이여야 합니다.");
     } else {
-      const nicknameRef = collection(db, "userNickname");
-
-      const nicknameDataQuery = query(
-        nicknameRef,
-        where("nickname", "==", typedNickname)
-      );
-
-      const nicknameDataSnapshot = await getDocs(nicknameDataQuery);
-
-      nicknameDataSnapshot.forEach((doc) => {
-        if (doc.data()) {
-          alert("이미 존재하는 닉네임입니다.");
-          throw Error();
-        }
-      });
-      alert("사용 가능한 닉네임입니다.");
+      checkNicknameDuplicate();
     }
   };
 
   const requestSignUp = () => {
-    setIsLoading(true);
+    if (isDuplicateNickname) {
+      alert("아직 닉네임 중복체크를 통과하지 못했습니다.");
+      throw Error();
+    }
     const expEmail = /^[A-Za-z0-9]*@[A-Za-z0-9]*.[A-Za-z]{2,3}$/;
     if (!expEmail.test(typedEmail)) {
       setWarnEmailInput("이메일 형식에 맞지 않습니다.");
@@ -117,12 +125,9 @@ const SignUp = ({ closeSignUpModal }: any) => {
           alert("이미 가입된 이메일입니다.");
         }
       });
-    setIsLoading(false);
   };
 
-  return isLoading ? (
-    <LoadingState />
-  ) : (
+  return (
     <Modal
       width="400px"
       height="auto"
@@ -143,13 +148,16 @@ const SignUp = ({ closeSignUpModal }: any) => {
             placeholder="닉네임을 입력해주세요"
             warn={warnNicknameInput}
             maxLength={10}
-            onChange={(data) => setTypedNickname(data.value)}
+            onChange={(data) => {
+              setTypedNickname(data.value);
+              setIsDuplicateNickname(true);
+            }}
           />
           <Button
             width="120px"
             kind="secondary"
             name="닉네임 중복 확인"
-            onClick={checkNicknameDuplicate}
+            onClick={checkNickname}
           />
           <TextInput
             id="email"
