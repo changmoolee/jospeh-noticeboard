@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./CommentContainer.module.scss";
-import { Button, TextInput } from "joseph-ui-kit";
+import { Button, SkeletonUI, TextInput } from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
@@ -50,6 +50,7 @@ const CommentContainer = ({ post }: any) => {
         comments: [...currentComments, newComment],
       })
         .then(() => {
+          setIsLoading(true);
           const updatedComment = getDoc(doc(db, "comment", post.postId));
 
           updatedComment
@@ -57,10 +58,12 @@ const CommentContainer = ({ post }: any) => {
               if (doc.data()?.comments) {
                 setCurrentComments(doc.data()?.comments);
               }
+              setIsLoading(false);
             })
-            .catch((err) =>
-              console.log(err, "업데이트가 완료된 댓글을 불러오지 못했습니다.")
-            );
+            .catch((err) => {
+              console.log(err, "업데이트가 완료된 댓글을 불러오지 못했습니다.");
+              setIsLoading(false);
+            });
         })
         .catch((err) =>
           console.log(err, "새로운 댓글 업데이트를 실패했습니다.")
@@ -89,23 +92,31 @@ const CommentContainer = ({ post }: any) => {
           <div className={styles.userImageWrapper}>
             <UserImage userImageData={userImage} />
           </div>
-          <div className={styles.commentInputWrapper}>
-            <TextInput
-              width="100%"
-              placeholder="댓글을 입력해 주세요."
-              hideLabel
-              warn={warnCommentInput}
-              maxLength={500}
-              onChange={(data) => setTypedCommentInput(data.value)}
-            />
-          </div>
-          <Button
-            width="50px"
-            padding="0"
-            position="center"
-            name="게시"
-            onClick={postComment}
-          />
+          {isLoading ? (
+            <SkeletonUI width="100%">
+              <div className={styles.skeletonInputWrapper}></div>
+            </SkeletonUI>
+          ) : (
+            <>
+              <div className={styles.commentInputWrapper}>
+                <TextInput
+                  width="100%"
+                  placeholder="댓글을 입력해 주세요."
+                  hideLabel
+                  warn={warnCommentInput}
+                  maxLength={500}
+                  onChange={(data) => setTypedCommentInput(data.value)}
+                />
+              </div>
+              <Button
+                width="50px"
+                padding="0"
+                position="center"
+                name="게시"
+                onClick={postComment}
+              />
+            </>
+          )}
         </div>
       ) : (
         <div className={styles.noSignInComment}>

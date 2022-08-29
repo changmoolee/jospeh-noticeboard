@@ -16,8 +16,8 @@
 }
 
 .userImageWrapper {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,8 +25,8 @@
   border-radius: 50%;
   cursor: pointer;
   @media screen and (max-width: 900px) {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
   }
 }
 
