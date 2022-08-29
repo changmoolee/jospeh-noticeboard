@@ -11,7 +11,9 @@ const Comment = ({ comment }: any) => {
         </div>
         <div className={styles.nicknameAndTime}>
           <div className={styles.userNickname}>
-            {comment.userNickname + " 님의 댓글"}
+            {comment.userNickname
+              ? comment.userNickname + " 님의 댓글"
+              : "unKnown의 댓글"}
           </div>
           <div className={styles.createdTime}>{comment.createdTime}</div>
         </div>

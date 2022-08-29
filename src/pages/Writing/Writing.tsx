@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Writing.module.scss";
 import { useNavigate } from "react-router-dom";
-import { TextInput, TextArea, Button, Loading } from "joseph-ui-kit";
+import {
+  TextInput,
+  FileUploaderDropContainer,
+  TextArea,
+  Button,
+} from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
+import LoadingState from "../../components/LoadingState/LoadingState";
 
 const Writing = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [typedTitle, setTypedTitle] = useState("");
   const [attachment, setAttachment] = useState("");
+  const [typedTitle, setTypedTitle] = useState("");
   const [typedContent, setContent] = useState("");
   const [warnTitleInput, setWarnTitleInput] = useState("");
   const [warnContentInput, setWarnContentInput] = useState("");
@@ -28,25 +40,7 @@ const Writing = () => {
     navigate("/");
   };
 
-  const onFileChange = (event: any) => {
-    const {
-      target: { files },
-    } = event;
-
-    const theFile = files[0];
-
-    const reader = new FileReader();
-    reader.onloadend = (finishedEvent: any) => {
-      const {
-        currentTarget: { result },
-      } = finishedEvent;
-
-      setAttachment(result);
-    };
-    reader.readAsDataURL(theFile);
-  };
-
-  const addPost = () => {
+  const addPost = async () => {
     const postId = uuidv4();
     if (typedTitle === "") {
       setWarnTitleInput("입력된 제목이 없습니다.");
@@ -55,6 +49,18 @@ const Writing = () => {
       setWarnTitleInput("");
       setWarnContentInput("입력된 내용이 없습니다.");
     } else {
+      let url;
+      if (attachment) {
+        const storage = getStorage();
+        const postImageRef = ref(storage, postId);
+
+        await uploadString(postImageRef, attachment, "data_url");
+
+        url = await getDownloadURL(ref(storage, postId));
+      } else {
+        url = "";
+      }
+
       setDoc(doc(db, "freeboard", postId), {
         postId: postId,
         createdTime: new Date().toLocaleString(),
@@ -62,11 +68,12 @@ const Writing = () => {
         userNickname: userNickname,
         userImage: userImage,
         title: typedTitle,
-        contentImage: attachment,
+        contentImage: url,
         content: typedContent,
       })
         .then(() => {
           setDoc(doc(db, "comment", postId), { comments: [] });
+          alert("게시물이 등록되었습니다.");
           goToMain();
         })
         .catch((err) => {
@@ -87,58 +94,48 @@ const Writing = () => {
       } else {
         // User is signed out
         // ...
+        alert("잘못된 접근입니다.");
+        goToMain();
       }
       setIsLoading(false);
     });
   }, []);
 
-  return isLoading ? (
-    <div className={styles.loadingContainer}>
-      <Loading />
-    </div>
-  ) : (
-    <div className={styles.container}>
-      글쓰기
-      <TextInput
-        width="100%"
-        placeholder="제목을 입력해 주세요."
-        hideLabel
-        warn={warnTitleInput}
-        onChange={(data) => setTypedTitle(data.value)}
-      />
-      <label htmlFor="upload" className={styles.uploadImageContainer}>
-        {attachment ? (
-          <img
-            className={styles.uploadImage}
-            src={attachment}
-            alt="contentImage"
-          />
-        ) : (
-          <div className={styles.uploadImageButton}>이미지 업로드</div>
-        )}
-      </label>
-      <input
-        style={{ display: "none" }}
-        id="upload"
-        type="file"
-        accept="image/*"
-        onChange={onFileChange}
-      />
-      <TextArea
-        width="100%"
-        placeholder="내용을 입력해 주세요."
-        hideLabel
-        warn={warnContentInput}
-        onChange={(data) => setContent(data.value)}
-      />
-      <Button
-        width="100%"
-        name="등록"
-        padding="0"
-        position="center"
-        onClick={addPost}
-      />
-    </div>
+  return (
+    <>
+      {isLoading ? <LoadingState /> : null}
+      <div className={styles.container}>
+        글쓰기
+        <TextInput
+          width="100%"
+          placeholder="제목을 입력해 주세요."
+          hideLabel
+          warn={warnTitleInput}
+          maxLength={50}
+          onChange={(data) => setTypedTitle(data.value)}
+        />
+        <FileUploaderDropContainer
+          width="100%"
+          labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요."
+          onChange={(_, data) => setAttachment(data.result)}
+        />
+        <TextArea
+          width="100%"
+          placeholder="내용을 입력해 주세요."
+          hideLabel
+          warn={warnContentInput}
+          maxLength={1000}
+          onChange={(data) => setContent(data.value)}
+        />
+        <Button
+          width="100%"
+          name="등록"
+          padding="0"
+          position="center"
+          onClick={addPost}
+        />
+      </div>
+    </>
   );
 };
 
