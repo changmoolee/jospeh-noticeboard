@@ -1,4 +1,9 @@
 .paragraph {
-  padding: 20px;
+  width: 100%;
+  height: 100%;
+  padding: 50px 20px;
   box-sizing: border-box;
+  span {
+    font-size: 18px;
+  }
 }
