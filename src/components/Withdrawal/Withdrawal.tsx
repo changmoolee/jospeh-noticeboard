@@ -3,12 +3,16 @@ import styles from "./Withdrawal.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal } from "joseph-ui-kit";
 import { db } from "../../firebase";
-import { deleteUser } from "firebase/auth";
+import { getAuth, deleteUser } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import LoadingState from "../LoadingState/LoadingState";
 
-const Withdrawal = ({ user }: any) => {
+const Withdrawal = () => {
+  const auth = getAuth();
+
+  const user = auth?.currentUser;
+
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -23,36 +27,38 @@ const Withdrawal = ({ user }: any) => {
   const closeModal = () => setIsModalOpen(false);
 
   const withdrawFromApp = async () => {
-    setIsLoading(true);
-    deleteUser(user)
-      .then(() => {
-        alert("회원탈퇴가 완료되었습니다.");
-        setIsLoading(false);
-        closeModal();
-        goToMain();
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("회원탈퇴에 실패했습니다.");
-        setIsLoading(false);
-      });
-    await deleteDoc(doc(db, "userNickname", user.uid));
-    // 닉네임 컬렉션(닉네임 중복 여부 확인)에서도 삭제
-
-    const storage = getStorage();
-    const userImageRef = ref(storage, user.uid);
-
-    if (user.photoURL) {
-      deleteObject(userImageRef)
+    if (user !== null) {
+      setIsLoading(true);
+      deleteUser(user)
         .then(() => {
-          // File deleted successfully
+          alert("회원탈퇴가 완료되었습니다.");
+          setIsLoading(false);
+          closeModal();
+          goToMain();
         })
-        .catch((error) => {
-          // Uh-oh, an error occurred!
-          console.log(error, "유저 이미지 삭제에 실패했습니다.");
+        .catch((err) => {
+          console.log(err);
+          alert("회원탈퇴에 실패했습니다.");
+          setIsLoading(false);
         });
+      await deleteDoc(doc(db, "userNickname", user.uid));
+      // 닉네임 컬렉션(닉네임 중복 여부 확인)에서도 삭제
+
+      const storage = getStorage();
+      const userImageRef = ref(storage, user.uid);
+
+      if (user.photoURL) {
+        deleteObject(userImageRef)
+          .then(() => {
+            // File deleted successfully
+          })
+          .catch((error) => {
+            // Uh-oh, an error occurred!
+            console.log(error, "유저 이미지 삭제에 실패했습니다.");
+          });
+      }
+      // storage에서 유저 이미지가 등록되어 있다면 삭제
     }
-    // storage에서 유저 이미지가 등록되어 있다면 삭제
   };
 
   return (

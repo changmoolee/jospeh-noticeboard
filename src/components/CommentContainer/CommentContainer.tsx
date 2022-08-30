@@ -7,8 +7,12 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import Comment from "../Comment/Comment";
 import UserImage from "../UserImage/UserImage";
+import { PostProps } from "../Post/Post";
+import { CommentProps } from "../Comment/Comment";
 
-const CommentContainer = ({ post }: any) => {
+interface CommentContainerProps extends PostProps {}
+
+const CommentContainer = ({ post }: CommentContainerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [typedCommentInput, setTypedCommentInput] = useState("");
   const [warnCommentInput, setWarnCommentInput] = useState("");
@@ -26,7 +30,7 @@ const CommentContainer = ({ post }: any) => {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  const userImage = user?.photoURL;
+  const userImage = user?.photoURL ? user?.photoURL : "";
 
   const postComment = () => {
     const commentId = uuidv4();
@@ -54,7 +58,7 @@ const CommentContainer = ({ post }: any) => {
           const updatedComment = getDoc(doc(db, "comment", post.postId));
 
           updatedComment
-            .then((doc: any) => {
+            .then((doc) => {
               if (doc.data()?.comments) {
                 setCurrentComments(doc.data()?.comments);
               }
@@ -76,7 +80,7 @@ const CommentContainer = ({ post }: any) => {
     const comment = getDoc(doc(db, "comment", post.postId));
 
     comment
-      .then((doc: any) => {
+      .then((doc) => {
         if (doc.data()?.comments) {
           setCurrentComments(doc.data()?.comments);
         }
@@ -134,7 +138,7 @@ const CommentContainer = ({ post }: any) => {
         <Comment comment={currentComments[0]} />
       ) : isOpenMoreComments ? (
         <>
-          {currentComments.map((comment: any) => (
+          {currentComments.map(({ comment }: CommentProps) => (
             <Comment comment={comment} key={comment.commentId} />
           ))}
           <Button

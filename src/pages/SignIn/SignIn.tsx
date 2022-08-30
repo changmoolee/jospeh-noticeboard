@@ -38,7 +38,7 @@ const SignIn = () => {
 
   const user = auth?.currentUser;
 
-  const onSignIn = (event: any) => {
+  const onSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -64,7 +64,7 @@ const SignIn = () => {
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
 
-  const onGoogleClick = (event: any) => {
+  const onGoogleClick = () => {
     signInWithPopup(auth, googleProvider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -93,7 +93,7 @@ const SignIn = () => {
       });
   };
 
-  const onGithubClick = (event: any) => {
+  const onGithubClick = () => {
     signInWithPopup(auth, githubProvider)
       .then((result) => {
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.

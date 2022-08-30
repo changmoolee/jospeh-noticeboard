@@ -3,7 +3,22 @@ import styles from "./Post.module.scss";
 import CommentContainer from "../CommentContainer/CommentContainer";
 import UserImage from "../UserImage/UserImage";
 
-const Post = ({ post }: any) => {
+export interface PostPropertiesProps {
+  content: string;
+  contentImage: string;
+  createdTime: string;
+  postId: string;
+  title: string;
+  userId: string;
+  userImage: string;
+  userNickname: string;
+}
+
+export interface PostProps {
+  post: PostPropertiesProps;
+}
+
+const Post = ({ post }: PostProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -27,9 +42,8 @@ const Post = ({ post }: any) => {
               className={styles.contentImage}
               alt="contentImage"
               src={post.contentImage}
-              referrerPolicy="no-referrer"
-              onError={(e: any) =>
-                (e.target.src =
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+                ((e.target as HTMLImageElement).src =
                   "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-camera.png?alt=media&token=8e62d94f-3465-45bb-8cce-15476c91b727")
               }
             />

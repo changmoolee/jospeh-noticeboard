@@ -61,22 +61,23 @@ const MyProfile = () => {
     setAttachment("");
   };
 
-  const onFileChange = (event: any) => {
-    const {
-      target: { files },
-    } = event;
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = (event.target as HTMLInputElement).files;
 
-    const theFile = files[0];
+    const theFile = files instanceof FileList ? files[0] : null;
 
     const reader = new FileReader();
-    reader.onloadend = (finishedEvent: any) => {
-      const {
-        currentTarget: { result },
-      } = finishedEvent;
+    reader.onloadend = (finishedEvent: ProgressEvent<FileReader>) => {
+      const result = (finishedEvent.currentTarget as FileReader)?.result;
 
-      setAttachment(result);
+      if (typeof result === "string") {
+        setAttachment(result);
+      }
+      // https://developer.mozilla.org/ko/docs/Web/API/FileReader/result
     };
-    reader.readAsDataURL(theFile);
+    if (theFile instanceof File) {
+      reader.readAsDataURL(theFile);
+    }
   };
 
   const onSubmit = async () => {
@@ -248,7 +249,7 @@ const MyProfile = () => {
             />
           )}
           <SignOut />
-          <Withdrawal user={user} />
+          <Withdrawal />
         </div>
       </div>
       {isAuthLogin ? null : (

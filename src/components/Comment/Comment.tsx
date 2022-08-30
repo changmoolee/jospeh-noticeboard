@@ -2,7 +2,18 @@ import React from "react";
 import UserImage from "../UserImage/UserImage";
 import styles from "./Comment.module.scss";
 
-const Comment = ({ comment }: any) => {
+export interface CommentProps {
+  comment: {
+    commentId: string;
+    createdTime: string;
+    userId: string;
+    userImage: string;
+    userNickname: string;
+    commentContent: string;
+  };
+}
+
+const Comment = ({ comment }: CommentProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.userInfo}>

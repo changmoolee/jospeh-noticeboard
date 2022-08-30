@@ -18,7 +18,11 @@ import {
 } from "firebase/firestore";
 import LoadingState from "../LoadingState/LoadingState";
 
-const SignUp = ({ closeSignUpModal }: any) => {
+interface SignUpProps {
+  closeSignUpModal: () => void;
+}
+
+const SignUp = ({ closeSignUpModal }: SignUpProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDuplicateNickname, setIsDuplicateNickname] = useState(false);
   const [typedNickname, setTypedNickname] = useState("");
