@@ -27,6 +27,7 @@ const Post = ({ post }: any) => {
               className={styles.contentImage}
               alt="contentImage"
               src={post.contentImage}
+              referrerPolicy="no-referrer"
               onError={(e: any) =>
                 (e.target.src =
                   "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-camera.png?alt=media&token=8e62d94f-3465-45bb-8cce-15476c91b727")
