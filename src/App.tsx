@@ -14,7 +14,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Header />
-        <div className={layout.outer}>
+        <main className={layout.outer}>
           <div className={layout.inner}>
             <Routes>
               <Route path="/" element={<Main />} />
@@ -23,7 +23,7 @@ function App() {
               <Route path="/writing" element={<Writing />} />
             </Routes>
           </div>
-        </div>
+        </main>
       </BrowserRouter>
     </div>
   );

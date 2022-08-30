@@ -108,7 +108,7 @@ const Writing = () => {
     <>
       {isLoading ? <LoadingState /> : null}
       <div className={styles.container}>
-        글쓰기
+        당신의 반려동물 이야기를 공유해주세요!
         <TextInput
           width="100%"
           placeholder="제목을 입력해 주세요."

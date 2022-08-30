@@ -162,7 +162,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="nickname"
               label="닉네임"
               type="nickname"
-              placeholder="닉네임을 입력해주세요"
+              placeholder="2글자 이상의 닉네임"
               warn={warnNicknameInput}
               maxLength={10}
               onChange={(data) => {
@@ -180,7 +180,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="email"
               label="이메일"
               type="email"
-              placeholder="이메일을 입력해주세요"
+              placeholder="예) abc1234@abc.com"
               warn={warnEmailInput}
               maxLength={50}
               onChange={(data) => setTypedEmail(data.value)}
@@ -189,7 +189,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="password"
               label="비밀번호"
               type="password"
-              placeholder="비밀번호를 입력해주세요"
+              placeholder="6자 이상의 비밀번호"
               warn={warnPasswordInput}
               maxLength={50}
               onChange={(data) => setTypedPassword(data.value)}

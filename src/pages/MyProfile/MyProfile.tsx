@@ -208,7 +208,7 @@ const MyProfile = () => {
       }
       setIsLoading(false);
     });
-  }, []);
+  }, [auth]);
 
   return isLoading ? (
     <LoadingState />

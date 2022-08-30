@@ -125,7 +125,9 @@ const CommentContainer = ({ post }: any) => {
         </div>
       )}
       {isLoading ? (
-        <div className={styles.noComment} />
+        <SkeletonUI width="100%">
+          <div className={styles.noComment} />
+        </SkeletonUI>
       ) : currentComments?.length === 0 ? (
         <div className={styles.noComment}>댓글이 없습니다.</div>
       ) : currentComments?.length === 1 ? (

@@ -1,7 +1,7 @@
 @use "joseph-sass/type";
 
 .container {
-  @include type.FixedHeadingStyles(heading04);
+  @include type.FixedHeadingStyles(heading03);
   display: grid;
   row-gap: 20px;
   padding: 20px;
