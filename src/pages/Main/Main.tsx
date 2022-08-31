@@ -4,10 +4,10 @@ import styles from "./Main.module.scss";
 import Post from "../../components/Post/Post";
 import SortDropDown from "../../components/SortDropDown/SortDropDown";
 import LoadingState from "../../components/LoadingState/LoadingState";
-import { PostPropertiesProps } from "../../components/Post/Post";
+import { PostProperties } from "../../components/Post/Post";
 
 const Main = () => {
-  const [posts, setPosts] = useState<PostPropertiesProps[]>([]);
+  const [posts, setPosts] = useState<PostProperties[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   return (

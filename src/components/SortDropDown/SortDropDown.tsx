@@ -3,8 +3,7 @@ import styles from "./SortDropDown.module.scss";
 import { DropDown } from "joseph-ui-kit";
 import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { PostPropertiesProps } from "../../components/Post/Post";
-import { DocumentData } from "firebase/firestore";
+import { PostProperties } from "../../components/Post/Post";
 
 const items = [
   { id: "desc", value: "최신순" },
@@ -13,7 +12,7 @@ const items = [
 
 interface SortDropDownProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setPosts: React.Dispatch<React.SetStateAction<PostPropertiesProps[]>>;
+  setPosts: React.Dispatch<React.SetStateAction<PostProperties[]>>;
 }
 
 type dataType = {

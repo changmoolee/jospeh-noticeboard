@@ -2,15 +2,16 @@ import React from "react";
 import UserImage from "../UserImage/UserImage";
 import styles from "./Comment.module.scss";
 
+export interface CommentProperties {
+  commentId: string;
+  createdTime: string;
+  userId: string;
+  userImage: string;
+  userNickname: string;
+  commentContent: string;
+}
 export interface CommentProps {
-  comment: {
-    commentId: string;
-    createdTime: string;
-    userId: string;
-    userImage: string;
-    userNickname: string;
-    commentContent: string;
-  };
+  comment: CommentProperties;
 }
 
 const Comment = ({ comment }: CommentProps) => {

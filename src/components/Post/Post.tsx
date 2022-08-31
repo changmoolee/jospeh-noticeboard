@@ -3,7 +3,7 @@ import styles from "./Post.module.scss";
 import CommentContainer from "../CommentContainer/CommentContainer";
 import UserImage from "../UserImage/UserImage";
 
-export interface PostPropertiesProps {
+export interface PostProperties {
   content: string;
   contentImage: string;
   createdTime: string;
@@ -15,7 +15,7 @@ export interface PostPropertiesProps {
 }
 
 export interface PostProps {
-  post: PostPropertiesProps;
+  post: PostProperties;
 }
 
 const Post = ({ post }: PostProps) => {
