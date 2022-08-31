@@ -8,7 +8,7 @@ import { uuidv4 } from "@firebase/util";
 import Comment from "../Comment/Comment";
 import UserImage from "../UserImage/UserImage";
 import { PostProps } from "../Post/Post";
-import { CommentProps } from "../Comment/Comment";
+import { CommentProperties } from "../Comment/Comment";
 
 interface CommentContainerProps extends PostProps {}
 
@@ -33,6 +33,7 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
   const userImage = user?.photoURL ? user?.photoURL : "";
 
   const postComment = () => {
+    setIsLoading(true);
     const commentId = uuidv4();
     if (!typedCommentInput) {
       setWarnCommentInput("아무것도 입력하지 않으셨습니다.");
@@ -54,7 +55,6 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
         comments: [...currentComments, newComment],
       })
         .then(() => {
-          setIsLoading(true);
           const updatedComment = getDoc(doc(db, "comment", post.postId));
 
           updatedComment
@@ -62,17 +62,16 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
               if (doc.data()?.comments) {
                 setCurrentComments(doc.data()?.comments);
               }
-              setIsLoading(false);
             })
             .catch((err) => {
               console.log(err, "업데이트가 완료된 댓글을 불러오지 못했습니다.");
-              setIsLoading(false);
             });
         })
         .catch((err) =>
           console.log(err, "새로운 댓글 업데이트를 실패했습니다.")
         );
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -84,9 +83,9 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
         if (doc.data()?.comments) {
           setCurrentComments(doc.data()?.comments);
         }
-        setIsLoading(false);
       })
       .catch((err) => console.log(err, "댓글 데이터를 불러오지 못했습니다."));
+    setIsLoading(false);
   }, [post.postId]);
 
   return (
@@ -138,7 +137,7 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
         <Comment comment={currentComments[0]} />
       ) : isOpenMoreComments ? (
         <>
-          {currentComments.map(({ comment }: CommentProps) => (
+          {currentComments.map((comment: CommentProperties) => (
             <Comment comment={comment} key={comment.commentId} />
           ))}
           <Button

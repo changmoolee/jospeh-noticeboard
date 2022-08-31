@@ -218,9 +218,7 @@ const MyProfile = () => {
     });
   }, [auth]);
 
-  return isLoading ? (
-    <LoadingState />
-  ) : (
+  return (
     <div className={styles.container}>
       <div className={styles.subContainer}>
         <label htmlFor="upload" className={styles.userImageWrapper}>
@@ -235,14 +233,28 @@ const MyProfile = () => {
             />
           </div>
         )}
-        <TextInput
-          defaultValue={userNickname}
-          label="닉네임"
-          warn={warnNicknameInput}
-          disabled={isAuthLogin}
-          placeholder="닉네임을 입력해 주세요."
-          onChange={(data) => setTypedNickname(data.value)}
-        />
+        {isLoading ? (
+          <>
+            <LoadingState />
+            <TextInput
+              defaultValue={userNickname}
+              label="닉네임"
+              warn={warnNicknameInput}
+              disabled={isAuthLogin}
+              placeholder="닉네임을 입력해 주세요."
+              onChange={(data) => setTypedNickname(data.value)}
+            />
+          </>
+        ) : (
+          <TextInput
+            defaultValue={userNickname}
+            label="닉네임"
+            warn={warnNicknameInput}
+            disabled={isAuthLogin}
+            placeholder="닉네임을 입력해 주세요."
+            onChange={(data) => setTypedNickname(data.value)}
+          />
+        )}
         <div className={styles.buttonContainer}>
           {isAuthLogin ? (
             <span>OAuth 2.0으로 로그인 시, 프로필 수정은 불가합니다.</span>

@@ -30,34 +30,40 @@ const Withdrawal = () => {
     if (user !== null) {
       setIsLoading(true);
       deleteUser(user)
-        .then(() => {
+        .then(async () => {
+          await deleteDoc(doc(db, "userNickname", user.uid));
+          // 닉네임 컬렉션(닉네임 중복 여부 확인)에서도 삭제
+
+          const storage = getStorage();
+          const userImageRef = ref(storage, user.uid);
+
+          if (user.photoURL) {
+            deleteObject(userImageRef)
+              .then(() => {
+                // File deleted successfully
+              })
+              .catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log(error, "유저 이미지 삭제에 실패했습니다.");
+              });
+          }
+          // storage에서 유저 이미지가 등록되어 있다면 삭제
+
           alert("회원탈퇴가 완료되었습니다.");
           setIsLoading(false);
           closeModal();
           goToMain();
         })
         .catch((err) => {
+          if (err.code === "auth/requires-recent-login") {
+            alert(
+              "로그인을 한지 오랜시간이 경과되어 회원탈퇴가 불가능합니다. 재로그인이 필요합니다."
+            );
+          }
           console.log(err);
           alert("회원탈퇴에 실패했습니다.");
           setIsLoading(false);
         });
-      await deleteDoc(doc(db, "userNickname", user.uid));
-      // 닉네임 컬렉션(닉네임 중복 여부 확인)에서도 삭제
-
-      const storage = getStorage();
-      const userImageRef = ref(storage, user.uid);
-
-      if (user.photoURL) {
-        deleteObject(userImageRef)
-          .then(() => {
-            // File deleted successfully
-          })
-          .catch((error) => {
-            // Uh-oh, an error occurred!
-            console.log(error, "유저 이미지 삭제에 실패했습니다.");
-          });
-      }
-      // storage에서 유저 이미지가 등록되어 있다면 삭제
     }
   };
 

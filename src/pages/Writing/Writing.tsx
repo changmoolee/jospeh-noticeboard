@@ -41,6 +41,7 @@ const Writing = () => {
   };
 
   const addPost = async () => {
+    setIsLoading(true);
     const postId = uuidv4();
     if (typedTitle === "") {
       setWarnTitleInput("입력된 제목이 없습니다.");
@@ -72,7 +73,6 @@ const Writing = () => {
         content: typedContent,
       })
         .then(() => {
-          setIsLoading(true);
           setDoc(doc(db, "comment", postId), { comments: [] });
           alert("게시물이 등록되었습니다.");
           setIsLoading(false);
@@ -83,6 +83,7 @@ const Writing = () => {
           setIsLoading(false);
           console.log(err);
         });
+      setIsLoading(false);
     }
   };
 

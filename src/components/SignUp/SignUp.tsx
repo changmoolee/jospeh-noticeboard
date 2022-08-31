@@ -42,10 +42,6 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
     navigate("/");
   };
 
-  const goToMyProfile = () => {
-    navigate("/myprofile");
-  };
-
   const checkNicknameDuplicate = async () => {
     const nicknameRef = collection(db, "userNickname");
 
@@ -78,6 +74,8 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
   };
 
   const requestSignUp = () => {
+    setIsLoading(true);
+
     if (isDuplicateNickname) {
       alert("아직 닉네임 중복체크를 통과하지 못했습니다.");
       throw Error();
@@ -95,8 +93,6 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
 
     createUserWithEmailAndPassword(auth, typedEmail, typedPassword)
       .then((userCredential) => {
-        setIsLoading(true);
-
         // Signed in
         const user = userCredential.user;
 
@@ -107,24 +103,22 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
           .then(() => {
             setTypedEmail("");
             setTypedPassword("");
+            setDoc(doc(db, "userNickname", user.uid), {
+              nickname: typedNickname,
+            });
             alert("회원가입이 완료되었습니다.");
-            setIsLoading(false);
-            goToMain();
           })
           .catch((err) => {
             console.log(
               err,
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 닉네임 변경을 시도해 주세요."
             );
             alert(
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 닉네임 변경을 시도해 주세요."
             );
-            goToMyProfile();
           });
-
-        setDoc(doc(db, "userNickname", user.uid), {
-          nickname: typedNickname,
-        });
+        setIsLoading(false);
+        goToMain();
       })
       .catch((err) => {
         const errorCode = err.code;
@@ -144,7 +138,9 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
           setWarnEmailInput("");
           setWarnPasswordInput("비밀번호는 6자 이상 설정해 주세요.");
         }
+        setIsLoading(false);
       });
+    setIsLoading(false);
   };
 
   return (
