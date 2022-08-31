@@ -9,7 +9,6 @@ import { PostPropertiesProps } from "../../components/Post/Post";
 const Main = () => {
   const [posts, setPosts] = useState<PostPropertiesProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  console.log(posts);
 
   return (
     <>

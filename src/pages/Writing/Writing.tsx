@@ -119,7 +119,8 @@ const Writing = () => {
         />
         <FileUploaderDropContainer
           width="100%"
-          labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요."
+          labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요. (업로드할 수 있는 이미지 파일은 1MB 이하)"
+          fileSize={1}
           onChange={(_, data) => setAttachment(data.result)}
         />
         <TextArea

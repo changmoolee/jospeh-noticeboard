@@ -64,7 +64,16 @@ const MyProfile = () => {
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = (event.target as HTMLInputElement).files;
 
-    const theFile = files instanceof FileList ? files[0] : null;
+    if (files === null) throw Error("적절한 파일이 입력되지 않았습니다.");
+
+    const theFile = files[0];
+
+    if (theFile?.size > 1024 * 1024 * 1) {
+      alert("업로드할 수 있는 이미지 파일은 1MB 이하 사이즈만 가능합니다.");
+      throw Error(
+        `업로드할 수 있는 이미지 파일은 1MB 이하 사이즈만 가능합니다.`
+      );
+    }
 
     const reader = new FileReader();
     reader.onloadend = (finishedEvent: ProgressEvent<FileReader>) => {
@@ -75,9 +84,7 @@ const MyProfile = () => {
       }
       // https://developer.mozilla.org/ko/docs/Web/API/FileReader/result
     };
-    if (theFile instanceof File) {
-      reader.readAsDataURL(theFile);
-    }
+    reader.readAsDataURL(theFile);
   };
 
   const onSubmit = async () => {
