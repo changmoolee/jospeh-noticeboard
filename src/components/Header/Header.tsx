@@ -29,7 +29,7 @@ const Header = () => {
   }, [auth]);
 
   return (
-    <div className={styles.outer}>
+    <header className={styles.outer}>
       <div className={styles.inner}>
         <div className={styles.container}>
           <a
@@ -37,9 +37,9 @@ const Header = () => {
             href="/"
             style={{ textDecoration: "none", color: "black" }}
           >
-            joseph
+            My Pet
             <br />
-            noticeboard
+            Community
           </a>
           {isLoading ? null : isLogIn ? (
             <div className={styles.rightIconContainer}>
@@ -76,7 +76,7 @@ const Header = () => {
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

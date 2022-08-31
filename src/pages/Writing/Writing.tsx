@@ -41,6 +41,7 @@ const Writing = () => {
   };
 
   const addPost = async () => {
+    setIsLoading(true);
     const postId = uuidv4();
     if (typedTitle === "") {
       setWarnTitleInput("입력된 제목이 없습니다.");
@@ -72,7 +73,6 @@ const Writing = () => {
         content: typedContent,
       })
         .then(() => {
-          setIsLoading(true);
           setDoc(doc(db, "comment", postId), { comments: [] });
           alert("게시물이 등록되었습니다.");
           setIsLoading(false);
@@ -83,6 +83,7 @@ const Writing = () => {
           setIsLoading(false);
           console.log(err);
         });
+      setIsLoading(false);
     }
   };
 
@@ -108,7 +109,7 @@ const Writing = () => {
     <>
       {isLoading ? <LoadingState /> : null}
       <div className={styles.container}>
-        글쓰기
+        당신의 반려동물 이야기를 공유해주세요!
         <TextInput
           width="100%"
           placeholder="제목을 입력해 주세요."
@@ -119,7 +120,8 @@ const Writing = () => {
         />
         <FileUploaderDropContainer
           width="100%"
-          labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요."
+          labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요. (업로드할 수 있는 이미지 파일은 1MB 이하)"
+          fileSize={1}
           onChange={(_, data) => setAttachment(data.result)}
         />
         <TextArea

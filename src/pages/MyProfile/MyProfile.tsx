@@ -61,20 +61,28 @@ const MyProfile = () => {
     setAttachment("");
   };
 
-  const onFileChange = (event: any) => {
-    const {
-      target: { files },
-    } = event;
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = (event.target as HTMLInputElement).files;
+
+    if (files === null) throw Error("적절한 파일이 입력되지 않았습니다.");
 
     const theFile = files[0];
 
-    const reader = new FileReader();
-    reader.onloadend = (finishedEvent: any) => {
-      const {
-        currentTarget: { result },
-      } = finishedEvent;
+    if (theFile?.size > 1024 * 1024 * 1) {
+      alert("업로드할 수 있는 이미지 파일은 1MB 이하 사이즈만 가능합니다.");
+      throw Error(
+        `업로드할 수 있는 이미지 파일은 1MB 이하 사이즈만 가능합니다.`
+      );
+    }
 
-      setAttachment(result);
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent: ProgressEvent<FileReader>) => {
+      const result = (finishedEvent.currentTarget as FileReader)?.result;
+
+      if (typeof result === "string") {
+        setAttachment(result);
+      }
+      // https://developer.mozilla.org/ko/docs/Web/API/FileReader/result
     };
     reader.readAsDataURL(theFile);
   };
@@ -208,11 +216,9 @@ const MyProfile = () => {
       }
       setIsLoading(false);
     });
-  }, []);
+  }, [auth]);
 
-  return isLoading ? (
-    <LoadingState />
-  ) : (
+  return (
     <div className={styles.container}>
       <div className={styles.subContainer}>
         <label htmlFor="upload" className={styles.userImageWrapper}>
@@ -227,14 +233,28 @@ const MyProfile = () => {
             />
           </div>
         )}
-        <TextInput
-          defaultValue={userNickname}
-          label="닉네임"
-          warn={warnNicknameInput}
-          disabled={isAuthLogin}
-          placeholder="닉네임을 입력해 주세요."
-          onChange={(data) => setTypedNickname(data.value)}
-        />
+        {isLoading ? (
+          <>
+            <LoadingState />
+            <TextInput
+              defaultValue={userNickname}
+              label="닉네임"
+              warn={warnNicknameInput}
+              disabled={isAuthLogin}
+              placeholder="닉네임을 입력해 주세요."
+              onChange={(data) => setTypedNickname(data.value)}
+            />
+          </>
+        ) : (
+          <TextInput
+            defaultValue={userNickname}
+            label="닉네임"
+            warn={warnNicknameInput}
+            disabled={isAuthLogin}
+            placeholder="닉네임을 입력해 주세요."
+            onChange={(data) => setTypedNickname(data.value)}
+          />
+        )}
         <div className={styles.buttonContainer}>
           {isAuthLogin ? (
             <span>OAuth 2.0으로 로그인 시, 프로필 수정은 불가합니다.</span>
@@ -248,7 +268,7 @@ const MyProfile = () => {
             />
           )}
           <SignOut />
-          <Withdrawal user={user} />
+          <Withdrawal />
         </div>
       </div>
       {isAuthLogin ? null : (

@@ -3,7 +3,22 @@ import styles from "./Post.module.scss";
 import CommentContainer from "../CommentContainer/CommentContainer";
 import UserImage from "../UserImage/UserImage";
 
-const Post = ({ post }: any) => {
+export interface PostProperties {
+  content: string;
+  contentImage: string;
+  createdTime: string;
+  postId: string;
+  title: string;
+  userId: string;
+  userImage: string;
+  userNickname: string;
+}
+
+export interface PostProps {
+  post: PostProperties;
+}
+
+const Post = ({ post }: PostProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -27,10 +42,11 @@ const Post = ({ post }: any) => {
               className={styles.contentImage}
               alt="contentImage"
               src={post.contentImage}
-              onError={(e: any) =>
-                (e.target.src =
-                  "https://firebasestorage.googleapis.com/v0/b/joseph-noticeboard.appspot.com/o/no-camera.png?alt=media&token=8e62d94f-3465-45bb-8cce-15476c91b727")
-              }
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                (
+                  e.target as HTMLImageElement
+                ).src = require("../../assets/images/no-camera.png");
+              }}
             />
           </div>
         ) : null}

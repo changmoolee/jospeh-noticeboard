@@ -18,7 +18,11 @@ import {
 } from "firebase/firestore";
 import LoadingState from "../LoadingState/LoadingState";
 
-const SignUp = ({ closeSignUpModal }: any) => {
+interface SignUpProps {
+  closeSignUpModal: () => void;
+}
+
+const SignUp = ({ closeSignUpModal }: SignUpProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDuplicateNickname, setIsDuplicateNickname] = useState(false);
   const [typedNickname, setTypedNickname] = useState("");
@@ -36,10 +40,6 @@ const SignUp = ({ closeSignUpModal }: any) => {
 
   const goToMain = () => {
     navigate("/");
-  };
-
-  const goToMyProfile = () => {
-    navigate("/myprofile");
   };
 
   const checkNicknameDuplicate = async () => {
@@ -74,6 +74,8 @@ const SignUp = ({ closeSignUpModal }: any) => {
   };
 
   const requestSignUp = () => {
+    setIsLoading(true);
+
     if (isDuplicateNickname) {
       alert("아직 닉네임 중복체크를 통과하지 못했습니다.");
       throw Error();
@@ -91,8 +93,6 @@ const SignUp = ({ closeSignUpModal }: any) => {
 
     createUserWithEmailAndPassword(auth, typedEmail, typedPassword)
       .then((userCredential) => {
-        setIsLoading(true);
-
         // Signed in
         const user = userCredential.user;
 
@@ -103,24 +103,22 @@ const SignUp = ({ closeSignUpModal }: any) => {
           .then(() => {
             setTypedEmail("");
             setTypedPassword("");
+            setDoc(doc(db, "userNickname", user.uid), {
+              nickname: typedNickname,
+            });
             alert("회원가입이 완료되었습니다.");
-            setIsLoading(false);
-            goToMain();
           })
           .catch((err) => {
             console.log(
               err,
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 닉네임 변경을 시도해 주세요."
             );
             alert(
-              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 다시 시도해 주세요."
+              "회원가입이 되었지만, 닉네임 설정에는 실패했습니다. 나의 프로필 페이지에서 닉네임 변경을 시도해 주세요."
             );
-            goToMyProfile();
           });
-
-        setDoc(doc(db, "userNickname", user.uid), {
-          nickname: typedNickname,
-        });
+        setIsLoading(false);
+        goToMain();
       })
       .catch((err) => {
         const errorCode = err.code;
@@ -140,7 +138,9 @@ const SignUp = ({ closeSignUpModal }: any) => {
           setWarnEmailInput("");
           setWarnPasswordInput("비밀번호는 6자 이상 설정해 주세요.");
         }
+        setIsLoading(false);
       });
+    setIsLoading(false);
   };
 
   return (
@@ -162,7 +162,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="nickname"
               label="닉네임"
               type="nickname"
-              placeholder="닉네임을 입력해주세요"
+              placeholder="2글자 이상의 닉네임"
               warn={warnNicknameInput}
               maxLength={10}
               onChange={(data) => {
@@ -180,7 +180,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="email"
               label="이메일"
               type="email"
-              placeholder="이메일을 입력해주세요"
+              placeholder="예) abc1234@abc.com"
               warn={warnEmailInput}
               maxLength={50}
               onChange={(data) => setTypedEmail(data.value)}
@@ -189,7 +189,7 @@ const SignUp = ({ closeSignUpModal }: any) => {
               id="password"
               label="비밀번호"
               type="password"
-              placeholder="비밀번호를 입력해주세요"
+              placeholder="6자 이상의 비밀번호"
               warn={warnPasswordInput}
               maxLength={50}
               onChange={(data) => setTypedPassword(data.value)}

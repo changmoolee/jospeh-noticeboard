@@ -4,9 +4,10 @@ import styles from "./Main.module.scss";
 import Post from "../../components/Post/Post";
 import SortDropDown from "../../components/SortDropDown/SortDropDown";
 import LoadingState from "../../components/LoadingState/LoadingState";
+import { PostProperties } from "../../components/Post/Post";
 
 const Main = () => {
-  const [posts, setPosts] = useState<any>([]);
+  const [posts, setPosts] = useState<PostProperties[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -17,7 +18,7 @@ const Main = () => {
       ) : posts.length === 0 ? (
         <div className={styles.nullContainer}>등록된 데이터가 없습니다!</div>
       ) : (
-        posts.map((post: any) => <Post post={post} key={post.createdTime} />)
+        posts.map((post) => <Post post={post} key={post.createdTime} />)
       )}
     </>
   );
