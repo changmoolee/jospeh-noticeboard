@@ -1,6 +1,6 @@
 # joseph-noticeboard
 
-url : https://joseph-noticeboard.netlify.app/
+url : https://my-pet-community.netlify.app
 
 
 ## Tech Stack
