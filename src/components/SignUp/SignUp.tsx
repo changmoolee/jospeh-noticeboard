@@ -56,6 +56,7 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
       if (doc.data()) {
         setIsDuplicateNickname(true);
         alert("이미 존재하는 닉네임입니다.");
+        setIsLoading(false);
         throw Error();
       }
     });
@@ -78,16 +79,19 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
 
     if (isDuplicateNickname) {
       alert("아직 닉네임 중복체크를 통과하지 못했습니다.");
+      setIsLoading(false);
       throw Error();
     }
     const expEmail = /^[A-Za-z0-9]*@[A-Za-z0-9]*.[A-Za-z]{2,3}$/;
     if (!expEmail.test(typedEmail)) {
       alert("이메일 형식에 맞지 않습니다.");
       setWarnEmailInput("이메일 형식에 맞지 않습니다.");
+      setIsLoading(false);
       throw Error();
     } else if (typedPassword !== typedConfirmPassword) {
       setWarnPasswordInput("");
       setWarnConfirmPasswordInput("비밀번호 확인이 일치하지 않습니다.");
+      setIsLoading(false);
       throw Error();
     }
 
