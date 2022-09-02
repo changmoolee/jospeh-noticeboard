@@ -106,6 +106,7 @@ const MyProfile = () => {
         nicknameDataSnapshot.forEach((doc) => {
           if (doc.data()) {
             alert("이미 존재하는 닉네임입니다.");
+            setIsLoading(false);
             throw Error();
           }
         });
