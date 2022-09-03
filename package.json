@@ -1,7 +1,11 @@
 {
-  "name": "joseph-noticeboard",
+  "name": "my-pet-community",
+  "description": "TMDB의 Api를 이용하여 만든 영화 정보 검색사이트입니다. 자체 제작한 ui-kit인 joseph-ui-kit 패키지의 UI들을 활용하여 사이트를 완성했습니다. 영화의 정보들을 확인하고, 영화 이름을 검색하여 결과를 확인하세요!",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Joseph"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
@@ -44,5 +48,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/changmoolee/joseph-ui-kit/issues"
+  },
+  "homepage": "https://my-pet-community.netlify.app"
 }

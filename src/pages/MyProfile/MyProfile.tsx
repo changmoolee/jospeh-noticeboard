@@ -61,7 +61,7 @@ const MyProfile = () => {
     setAttachment("");
   };
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = (event.target as HTMLInputElement).files;
 
     if (files === null) throw Error("적절한 파일이 입력되지 않았습니다.");
@@ -87,7 +87,7 @@ const MyProfile = () => {
     reader.readAsDataURL(theFile);
   };
 
-  const onSubmit = async () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
     if (user === null) {
       alert("로그인이 되어있지 않습니다. 잘못된 접근입니다.");
@@ -265,7 +265,7 @@ const MyProfile = () => {
               width="100%"
               padding="0"
               position="center"
-              onClick={onSubmit}
+              onClick={handleSubmit}
             />
           )}
           <SignOut />
@@ -278,7 +278,7 @@ const MyProfile = () => {
           id="upload"
           type="file"
           accept="image/*"
-          onChange={onFileChange}
+          onChange={handleFileChange}
         />
       )}
     </div>
