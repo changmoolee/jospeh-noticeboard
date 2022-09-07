@@ -18,7 +18,6 @@ export interface PostProps {
 }
 
 const Post = ({ post }: PostProps) => {
-  console.log(post.createdTime);
   return (
     <div className={styles.container}>
       <div className={styles.header}>

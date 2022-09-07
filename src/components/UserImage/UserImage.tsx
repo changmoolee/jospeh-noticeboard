@@ -12,6 +12,7 @@ const UserImage = ({ userImageData }: UserImageProps) => {
       className={styles.userImage}
       alt="userimage"
       src={userImageData}
+      referrerPolicy="no-referrer"
       onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         (
           e.target as HTMLImageElement
