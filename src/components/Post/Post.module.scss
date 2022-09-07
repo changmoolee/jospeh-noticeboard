@@ -17,14 +17,6 @@
   box-sizing: border-box;
 }
 
-.title {
-  @include type.BodyStyles(body02);
-  overflow-wrap: break-word;
-  @media screen and (max-width: 900px) {
-    @include type.BodyStyles(body01);
-  }
-}
-
 .userInfo {
   display: flex;
   margin-top: 10px;
