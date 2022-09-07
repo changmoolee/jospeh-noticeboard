@@ -54,7 +54,7 @@ const Writing = () => {
 
       setDoc(doc(db, "freeboard", postId), {
         postId: postId,
-        createdTime: new Date().toLocaleString(),
+        createdTime: new Date().toLocaleString("ko-KR"),
         userId: userId,
         userNickname: userNickname,
         userImage: userImage,
