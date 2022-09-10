@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Header.module.scss";
+import { useAppDispatch } from "../../app/hooks";
+import {
+  SET_ACTIVE_USER,
+  REMOVE_ACTIVE_USER,
+} from "../../features/auth/authSlice";
 import { Button } from "joseph-ui-kit";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import WritingIcon from "../../assets/icons/WritingIcon";
@@ -10,6 +15,8 @@ const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogIn, setIsLogIn] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     setIsLoading(true);
     onAuthStateChanged(auth, (user) => {
@@ -19,10 +26,32 @@ const Header = () => {
         // const uid = user.uid;
         // ...
         setIsLogIn(true);
+        dispatch(
+          SET_ACTIVE_USER({
+            user: user,
+            isLoggedIn: true,
+            isAuthLogin:
+              user?.providerData[0].providerId === "github.com" ||
+              user?.providerData[0].providerId === "google.com"
+                ? true
+                : false,
+            userId: user?.uid,
+            userNickname:
+              user?.displayName === null || user?.displayName === undefined
+                ? ""
+                : user?.displayName,
+            userImage:
+              user?.providerData[0].photoURL === null ||
+              user?.providerData[0].photoURL === undefined
+                ? ""
+                : user?.providerData[0].photoURL,
+          })
+        );
       } else {
         // User is signed out
         // ...
         setIsLogIn(false);
+        dispatch(REMOVE_ACTIVE_USER({}));
       }
       setIsLoading(false);
     });
