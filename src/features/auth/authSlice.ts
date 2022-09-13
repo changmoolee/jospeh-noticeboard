@@ -23,10 +23,8 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     SET_ACTIVE_USER: (state, action) => {
-      console.log(action.payload);
-      const { user, isLoggedIn, isAuthLogin, userId, userNickname, userImage } =
+      const { isLoggedIn, isAuthLogin, userId, userNickname, userImage } =
         action.payload;
-      state.user = user;
       state.isLoggedIn = isLoggedIn;
       state.isAuthLogin = isAuthLogin;
       state.userId = userId;
@@ -45,6 +43,14 @@ export const authSlice = createSlice({
 
 export const { SET_ACTIVE_USER, REMOVE_ACTIVE_USER } = authSlice.actions;
 
-export const selectIsLoggedIn = (state: any) => state.auth.isLoggedIn;
+export const selectIsLoggedIn = (state: { auth: StateTypes }) =>
+  state.auth.isLoggedIn;
+export const selectIsAuthLogin = (state: { auth: StateTypes }) =>
+  state.auth.isAuthLogin;
+export const selectUserId = (state: { auth: StateTypes }) => state.auth.userId;
+export const selectUserNickname = (state: { auth: StateTypes }) =>
+  state.auth.userNickname;
+export const selectUserImage = (state: { auth: StateTypes }) =>
+  state.auth.userImage;
 
 export default authSlice.reducer;

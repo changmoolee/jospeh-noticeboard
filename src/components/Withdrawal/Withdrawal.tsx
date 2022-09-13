@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import styles from "./Withdrawal.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal } from "joseph-ui-kit";
-import { db } from "../../firebase";
-import { getAuth, deleteUser } from "firebase/auth";
+import { db, auth } from "../../firebase";
+import { deleteUser } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import LoadingState from "../LoadingState/LoadingState";
 
 const Withdrawal = () => {
-  const auth = getAuth();
-
   const user = auth?.currentUser;
 
   const [isLoading, setIsLoading] = useState(false);

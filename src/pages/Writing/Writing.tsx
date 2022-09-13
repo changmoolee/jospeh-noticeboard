@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Writing.module.scss";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../app/hooks";
+import {
+  selectUserId,
+  selectUserImage,
+  selectUserNickname,
+} from "../../features/auth/authSlice";
 import { FileUploaderDropContainer, TextArea, Button } from "joseph-ui-kit";
-import { db } from "../../firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { db, auth } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   getStorage,
   ref,
@@ -20,12 +26,9 @@ const Writing = () => {
   const [typedContent, setContent] = useState("");
   const [warnContentInput, setWarnContentInput] = useState("");
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  const userId = user?.uid;
-  const userNickname = user?.displayName;
-  const userImage = user?.photoURL;
+  const userId = useAppSelector(selectUserId);
+  const userNickname = useAppSelector(selectUserNickname);
+  const userImage = useAppSelector(selectUserImage);
 
   const navigate = useNavigate();
 

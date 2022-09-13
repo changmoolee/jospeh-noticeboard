@@ -23,28 +23,21 @@ import SignOut from "../../components/SignOut/SignOut";
 import UserImage from "../../components/UserImage/UserImage";
 import LoadingState from "../../components/LoadingState/LoadingState";
 import Withdrawal from "../../components/Withdrawal/Withdrawal";
+import { useAppSelector } from "../../app/hooks";
+import {
+  selectIsAuthLogin,
+  selectUserImage,
+  selectUserNickname,
+} from "../../features/auth/authSlice";
 
 const MyProfile = () => {
   const auth = getAuth();
 
   const user = auth?.currentUser;
 
-  const isAuthLogin =
-    user?.providerData[0].providerId === "github.com" ||
-    user?.providerData[0].providerId === "google.com"
-      ? true
-      : false;
-
-  const userImage =
-    user?.providerData[0].photoURL === null ||
-    user?.providerData[0].photoURL === undefined
-      ? ""
-      : user?.providerData[0].photoURL;
-
-  const userNickname =
-    user?.displayName === null || user?.displayName === undefined
-      ? ""
-      : user?.displayName;
+  const isAuthLogin = useAppSelector(selectIsAuthLogin);
+  const userImage = useAppSelector(selectUserImage);
+  const userNickname = useAppSelector(selectUserNickname);
 
   const [isLoading, setIsLoading] = useState(false);
   const [attachment, setAttachment] = useState(userImage);

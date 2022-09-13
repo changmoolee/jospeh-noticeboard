@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./SignIn.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput } from "joseph-ui-kit";
+import { auth } from "../../firebase";
 import {
-  getAuth,
   onAuthStateChanged,
   signInWithPopup,
   signInWithEmailAndPassword,
@@ -33,8 +33,6 @@ const SignIn = () => {
   const goToMain = () => {
     navigate("/");
   };
-
-  const auth = getAuth();
 
   const user = auth?.currentUser;
 
