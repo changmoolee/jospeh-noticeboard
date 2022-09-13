@@ -13,7 +13,7 @@ url : https://my-pet-community.netlify.app
 ## 개요
 
 #### my-pet-community는 반려동물을 주제로 자유롭게 소통할 수 있는 게시판 웹페이지 입니다. 게시판에 글을 남기고 자유롭게 소통하세요!
-#### 자체 제작한 ui-kit인, `joseph-ui-kit` 패키지의 UI들을 활용하여 사이트를 구성했습니다.
+#### 자체 제작한 ui-kit인, `joseph-ui-kit` 패키지의 UI를 활용하여 사이트를 구성했습니다.
 #### firebase의 다양한 기능들을 사용하여 제작하였습니다.
 <br><br>
 
