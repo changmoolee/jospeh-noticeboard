@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Header.module.scss";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import {
+  SET_ACTIVE_USER,
+  REMOVE_ACTIVE_USER,
+  selectIsLoggedIn,
+} from "../../features/auth/authSlice";
 import { Button } from "joseph-ui-kit";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
 import WritingIcon from "../../assets/icons/WritingIcon";
 import MyProfileIcon from "../../assets/icons/MyProfileIcon";
 
 const Header = () => {
-  const auth = getAuth();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const dispatch = useAppDispatch();
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isLogIn, setIsLogIn] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -18,11 +26,30 @@ const Header = () => {
         // https://firebase.google.com/docs/reference/js/firebase.User
         // const uid = user.uid;
         // ...
-        setIsLogIn(true);
+        dispatch(
+          SET_ACTIVE_USER({
+            isLoggedIn: true,
+            isAuthLogin:
+              user?.providerData[0].providerId === "github.com" ||
+              user?.providerData[0].providerId === "google.com"
+                ? true
+                : false,
+            userId: user?.uid,
+            userNickname:
+              user?.displayName === null || user?.displayName === undefined
+                ? ""
+                : user?.displayName,
+            userImage:
+              user?.providerData[0].photoURL === null ||
+              user?.providerData[0].photoURL === undefined
+                ? ""
+                : user?.providerData[0].photoURL,
+          })
+        );
       } else {
         // User is signed out
         // ...
-        setIsLogIn(false);
+        dispatch(REMOVE_ACTIVE_USER({}));
       }
       setIsLoading(false);
     });
@@ -41,7 +68,7 @@ const Header = () => {
             <br />
             Community
           </a>
-          {isLoading ? null : isLogIn ? (
+          {isLoading ? null : isLoggedIn ? (
             <div className={styles.rightIconContainer}>
               <a
                 className={styles.icon}

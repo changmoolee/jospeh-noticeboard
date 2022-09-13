@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styles from "./CommentContainer.module.scss";
+import { useAppSelector } from "../../app/hooks";
+import {
+  selectIsLoggedIn,
+  selectUserId,
+  selectUserImage,
+  selectUserNickname,
+} from "../../features/auth/authSlice";
 import { Button, SkeletonUI, TextInput } from "joseph-ui-kit";
 import { db } from "../../firebase";
-import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import Comment from "../Comment/Comment";
@@ -27,10 +33,10 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
     isSetOpenMoreComments(false);
   };
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  const userImage = user?.photoURL ? user?.photoURL : "";
+  const userId = useAppSelector(selectUserId);
+  const userNickname = useAppSelector(selectUserNickname);
+  const userImage = useAppSelector(selectUserImage);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
   const postComment = () => {
     setIsLoading(true);
@@ -45,9 +51,9 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
       const newComment = {
         commentId: commentId,
         createdTime: new Date().toLocaleString(),
-        userId: user?.uid,
-        userNickname: user?.displayName,
-        userImage: user?.photoURL,
+        userId: userId,
+        userNickname: userNickname,
+        userImage: userImage,
         commentContent: typedCommentInput,
       };
 
@@ -90,7 +96,7 @@ const CommentContainer = ({ post }: CommentContainerProps) => {
 
   return (
     <>
-      {user ? (
+      {isLoggedIn ? (
         <div className={styles.commentBox}>
           <div className={styles.userImageWrapper}>
             <UserImage userImageData={userImage} />

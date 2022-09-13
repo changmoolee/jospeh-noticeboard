@@ -8,7 +8,6 @@ export interface PostProperties {
   contentImage: string;
   createdTime: string;
   postId: string;
-  title: string;
   userId: string;
   userImage: string;
   userNickname: string;
@@ -22,7 +21,6 @@ const Post = ({ post }: PostProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>{post.title}</div>
         <div className={styles.userInfo}>
           <div className={styles.userImageWrapper}>
             <UserImage userImageData={post.userImage} />

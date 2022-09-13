@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Writing.module.scss";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../app/hooks";
 import {
-  TextInput,
-  FileUploaderDropContainer,
-  TextArea,
-  Button,
-} from "joseph-ui-kit";
-import { db } from "../../firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+  selectUserId,
+  selectUserImage,
+  selectUserNickname,
+} from "../../features/auth/authSlice";
+import { FileUploaderDropContainer, TextArea, Button } from "joseph-ui-kit";
+import { db, auth } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   getStorage,
   ref,
@@ -22,17 +23,12 @@ import LoadingState from "../../components/LoadingState/LoadingState";
 const Writing = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [attachment, setAttachment] = useState("");
-  const [typedTitle, setTypedTitle] = useState("");
   const [typedContent, setContent] = useState("");
-  const [warnTitleInput, setWarnTitleInput] = useState("");
   const [warnContentInput, setWarnContentInput] = useState("");
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  const userId = user?.uid;
-  const userNickname = user?.displayName;
-  const userImage = user?.photoURL;
+  const userId = useAppSelector(selectUserId);
+  const userNickname = useAppSelector(selectUserNickname);
+  const userImage = useAppSelector(selectUserImage);
 
   const navigate = useNavigate();
 
@@ -43,11 +39,8 @@ const Writing = () => {
   const addPost = async () => {
     setIsLoading(true);
     const postId = uuidv4();
-    if (typedTitle === "") {
-      setWarnTitleInput("입력된 제목이 없습니다.");
-      setWarnContentInput("");
-    } else if (typedContent === "") {
-      setWarnTitleInput("");
+
+    if (typedContent === "") {
       setWarnContentInput("입력된 내용이 없습니다.");
     } else {
       let url;
@@ -64,11 +57,10 @@ const Writing = () => {
 
       setDoc(doc(db, "freeboard", postId), {
         postId: postId,
-        createdTime: new Date().toLocaleString(),
+        createdTime: new Date().toLocaleString("ko-KR"),
         userId: userId,
         userNickname: userNickname,
         userImage: userImage,
-        title: typedTitle,
         contentImage: url,
         content: typedContent,
       })
@@ -110,14 +102,6 @@ const Writing = () => {
       {isLoading ? <LoadingState /> : null}
       <div className={styles.container}>
         당신의 반려동물 이야기를 공유해주세요!
-        <TextInput
-          width="100%"
-          placeholder="제목을 입력해 주세요."
-          hideLabel
-          warn={warnTitleInput}
-          maxLength={50}
-          onChange={(data) => setTypedTitle(data.value)}
-        />
         <FileUploaderDropContainer
           width="100%"
           labelText="이미지를 등록하기 위해 클릭하거나, 등록할 이미지를 드래그 해주세요. (업로드할 수 있는 이미지 파일은 1MB 이하)"

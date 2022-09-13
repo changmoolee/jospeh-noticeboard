@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import styles from "./SignUp.module.scss";
 import { useNavigate } from "react-router-dom";
 import { TextInput, Modal, Button } from "joseph-ui-kit";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { db } from "../../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { db, auth } from "../../firebase";
 import {
   collection,
   doc,
@@ -35,8 +31,6 @@ const SignUp = ({ closeSignUpModal }: SignUpProps) => {
   const [warnConfirmPasswordInput, setWarnConfirmPasswordInput] = useState("");
 
   const navigate = useNavigate();
-
-  const auth = getAuth();
 
   const goToMain = () => {
     navigate("/");

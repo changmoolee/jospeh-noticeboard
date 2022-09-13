@@ -2,11 +2,10 @@ import React from "react";
 import styles from "./SignOut.module.scss";
 import { useNavigate } from "react-router-dom";
 import { Button } from "joseph-ui-kit";
-import { getAuth, signOut } from "firebase/auth";
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
 
 const SignOut = () => {
-  const auth = getAuth();
-
   const navigate = useNavigate();
 
   const goToMain = () => {
